@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>DiagnosticsAgent</RootNamespace>
+        <ToolCommandName>dotnet-diagnostics-agent</ToolCommandName>
+        <PackageId>Rafaelldi.DiagnosticsAgent</PackageId>
+        <Version>2023.2.0-preview1</Version>
+        <Title>Diagnostics Agent</Title>
+        <Description>.NET Diagnostics Agent</Description>
+        <Authors>Rival Abdrakhmanov</Authors>
+        <PackageTags>Diagnostics</PackageTags>
+        <PackageProjectUrl>https://github.com/rafaelldi/diagnostics-agent</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/rafaelldi/diagnostics-agent</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Copyright>Copyright (c) Rival Abdrakhmanov 2023.</Copyright>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <ServerGarbageCollection>false</ServerGarbageCollection>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2023.2.0-eap3" />
+        <PackageReference Include="JetBrains.RdFramework" Version="2023.2.1" />
+        <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.430602" />
+        <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.3" />
+        <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    </ItemGroup>
+
+
+</Project>
