@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: diagnostics-agent
-          path: DiagnosticsAgent/bin/release/net7.0/${{ matrix.runtime }}/publish
+          path: ./DiagnosticsAgent/bin/release/net7.0/${{ matrix.runtime }}/publish
 
   test:
     name: Test
