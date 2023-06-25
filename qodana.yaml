@@ -1,0 +1,14 @@
+# Qodana configuration:
+# https://www.jetbrains.com/help/qodana/qodana-yaml.html
+
+version: 1.0
+linter: jetbrains/qodana-dotnet:latest
+profile:
+  name: qodana.recommended
+dotnet:
+  solution: DiagnosticsAgent.sln
+exclude:
+  - name: All
+    paths:
+      - DiagnosticsAgent/Generated
+      - DiagnosticsAgentTests

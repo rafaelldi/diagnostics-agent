@@ -10,7 +10,7 @@ connection with the server.
 To install the Diagnostics Agent as a global tool, you can use the .NET CLI:
 
 ```bash
-dotnet tool install --global diagnostics-agent
+dotnet tool install --global Rafaelldi.DiagnosticsAgent
 ```
 
 Make sure you have the .NET SDK installed on your machine.
