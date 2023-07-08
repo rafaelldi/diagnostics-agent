@@ -2,7 +2,6 @@
 using System.Globalization;
 using DiagnosticsAgent.Common;
 using DiagnosticsAgent.Model;
-using JetBrains.Collections.Viewable;
 using JetBrains.Lifetimes;
 using Microsoft.Diagnostics.NETCore.Client;
 
@@ -10,14 +9,11 @@ namespace DiagnosticsAgent.Processes;
 
 internal static class ProcessHandler
 {
+    private const string DiagnosticsAgentProcessName = "DiagnosticsAgent";
+
     internal static void Subscribe(DiagnosticsHostModel model, Lifetime lifetime)
     {
-        model.ProcessList.Active.WhenTrue(lifetime, lt => Handle(model.ProcessList, lt));
-    }
-
-    private static void Handle(ProcessList processList, Lifetime lt)
-    {
-        lt.StartAttachedAsync(TaskScheduler.Default, async () => await RefreshAsync(processList));
+        lifetime.StartAttachedAsync(TaskScheduler.Default, async () => await RefreshAsync(model.ProcessList));
     }
 
     private static async Task RefreshAsync(ProcessList processList)
@@ -47,6 +43,11 @@ internal static class ProcessHandler
             try
             {
                 var process = Process.GetProcessById(pid);
+                if (process.ProcessName == DiagnosticsAgentProcessName)
+                {
+                    continue;
+                }
+
                 var client = new DiagnosticsClient(pid);
                 var additionalProcessInfo = client.GetProcessInfo();
                 var filename = process.MainModule?.FileName;

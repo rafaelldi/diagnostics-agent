@@ -9,7 +9,7 @@
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>dotnet-diagnostics-agent</ToolCommandName>
         <PackageId>Rafaelldi.DiagnosticsAgent</PackageId>
-        <Version>2023.2.0-preview2</Version>
+        <Version>2023.2.0-preview3</Version>
         <Title>Diagnostics Agent</Title>
         <Description>.NET Diagnostics Agent</Description>
         <Authors>Rival Abdrakhmanov</Authors>
@@ -21,10 +21,12 @@
         <Copyright>Copyright (c) Rival Abdrakhmanov 2023.</Copyright>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <ServerGarbageCollection>false</ServerGarbageCollection>
+        <InvariantGlobalization>true</InvariantGlobalization>
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="..\README.md" Pack="true" PackagePath="\" />
+        <None Include="../README.md" Pack="true" PackagePath="\" />
+        <None Include="../CHANGELOG.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
     <ItemGroup>

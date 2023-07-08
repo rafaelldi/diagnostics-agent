@@ -136,7 +136,7 @@ namespace DiagnosticsAgent.Model
     
     
     
-    protected override long SerializationHash => -8447152889813447689L;
+    protected override long SerializationHash => 2553511267907261511L;
     
     protected override Action<ISerializers> Register => RegisterDeclaredTypesSerializers;
     public static void RegisterDeclaredTypesSerializers(ISerializers serializers)
@@ -196,7 +196,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:137</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:136</p>
   /// </summary>
   public sealed class ChartValue : IPrintable, IEquatable<ChartValue>
   {
@@ -295,7 +295,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:143</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:142</p>
   /// </summary>
   public enum ChartValueType {
     Cpu,
@@ -305,7 +305,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:165</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:164</p>
   /// </summary>
   public sealed class CollectDumpCommand : IPrintable, IEquatable<CollectDumpCommand>
   {
@@ -423,7 +423,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:182</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:181</p>
   /// </summary>
   public sealed class CollectStackTraceCommand : IPrintable, IEquatable<CollectStackTraceCommand>
   {
@@ -506,7 +506,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:95</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:94</p>
   /// </summary>
   public sealed class Counter : IPrintable, IEquatable<Counter>
   {
@@ -609,7 +609,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:43</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:42</p>
   /// </summary>
   public enum CounterFileFormat {
     Csv,
@@ -618,7 +618,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:176</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:175</p>
   /// </summary>
   public sealed class DumpCollectionResult : IPrintable, IEquatable<DumpCollectionResult>
   {
@@ -703,7 +703,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:167</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:166</p>
   /// </summary>
   public enum DumpType {
     Full,
@@ -714,7 +714,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:101</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:100</p>
   /// </summary>
   public sealed class GcEvent : IPrintable, IEquatable<GcEvent>
   {
@@ -912,7 +912,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:91</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:90</p>
   /// </summary>
   public sealed class LiveChartSession : LiveSession
   {
@@ -997,7 +997,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:73</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:72</p>
   /// </summary>
   public sealed class LiveCounterSession : LiveSession
   {
@@ -1126,7 +1126,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:82</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:81</p>
   /// </summary>
   public sealed class LiveGcEventSession : LiveSession
   {
@@ -1211,7 +1211,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:68</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:67</p>
   /// </summary>
   public abstract class LiveSession : RdBindableBase
   {
@@ -1330,7 +1330,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:86</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:85</p>
   /// </summary>
   public sealed class LiveTraceSession : LiveSession
   {
@@ -1426,7 +1426,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:42</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:41</p>
   /// </summary>
   public sealed class PersistentCounterSession : PersistentSession
   {
@@ -1533,7 +1533,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:54</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:53</p>
   /// </summary>
   public sealed class PersistentGcEventSession : PersistentSession
   {
@@ -1600,7 +1600,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:37</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:36</p>
   /// </summary>
   public abstract class PersistentSession : RdBindableBase
   {
@@ -1705,7 +1705,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:57</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:56</p>
   /// </summary>
   public sealed class PersistentTraceSession : PersistentSession
   {
@@ -1795,7 +1795,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:119</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:118</p>
   /// </summary>
   public enum PredefinedProvider {
     Http,
@@ -2048,34 +2048,26 @@ namespace DiagnosticsAgent.Model
   {
     //fields
     //public fields
-    [NotNull] public IViewableProperty<bool> Active => _Active;
     [NotNull] public IViewableMap<int, ProcessInfo> Items => _Items;
     
     //private fields
-    [NotNull] private readonly RdProperty<bool> _Active;
     [NotNull] private readonly RdMap<int, ProcessInfo> _Items;
     
     //primary constructor
     private ProcessList(
-      [NotNull] RdProperty<bool> active,
       [NotNull] RdMap<int, ProcessInfo> items
     )
     {
-      if (active == null) throw new ArgumentNullException("active");
       if (items == null) throw new ArgumentNullException("items");
       
-      _Active = active;
       _Items = items;
-      _Active.OptimizeNested = true;
       _Items.OptimizeNested = true;
       _Items.Async = true;
-      BindableChildren.Add(new KeyValuePair<string, object>("active", _Active));
       BindableChildren.Add(new KeyValuePair<string, object>("items", _Items));
     }
     //secondary constructor
     public ProcessList (
     ) : this (
-      new RdProperty<bool>(JetBrains.Rd.Impl.Serializers.ReadBool, JetBrains.Rd.Impl.Serializers.WriteBool),
       new RdMap<int, ProcessInfo>(JetBrains.Rd.Impl.Serializers.ReadInt, JetBrains.Rd.Impl.Serializers.WriteInt, ProcessInfo.Read, ProcessInfo.Write)
     ) {}
     //deconstruct trait
@@ -2084,16 +2076,14 @@ namespace DiagnosticsAgent.Model
     public static CtxReadDelegate<ProcessList> Read = (ctx, reader) => 
     {
       var _id = RdId.Read(reader);
-      var active = RdProperty<bool>.Read(ctx, reader, JetBrains.Rd.Impl.Serializers.ReadBool, JetBrains.Rd.Impl.Serializers.WriteBool);
       var items = RdMap<int, ProcessInfo>.Read(ctx, reader, JetBrains.Rd.Impl.Serializers.ReadInt, JetBrains.Rd.Impl.Serializers.WriteInt, ProcessInfo.Read, ProcessInfo.Write);
-      var _result = new ProcessList(active, items).WithId(_id);
+      var _result = new ProcessList(items).WithId(_id);
       return _result;
     };
     
     public static CtxWriteDelegate<ProcessList> Write = (ctx, writer, value) => 
     {
       value.RdId.Write(writer);
-      RdProperty<bool>.Write(ctx, writer, value._Active);
       RdMap<int, ProcessInfo>.Write(ctx, writer, value._Items);
     };
     
@@ -2108,7 +2098,6 @@ namespace DiagnosticsAgent.Model
     {
       printer.Println("ProcessList (");
       using (printer.IndentCookie()) {
-        printer.Print("active = "); _Active.PrintEx(printer); printer.Println();
         printer.Print("items = "); _Items.PrintEx(printer); printer.Println();
       }
       printer.Print(")");
@@ -2124,7 +2113,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:130</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:129</p>
   /// </summary>
   public sealed class Trace : IPrintable, IEquatable<Trace>
   {
@@ -2234,7 +2223,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:58</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:57</p>
   /// </summary>
   public enum TracingProfile {
     None,

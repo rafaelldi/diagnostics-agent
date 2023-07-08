@@ -20,11 +20,10 @@ internal static class DiagnosticsHost
 {
     internal static async Task Run(int port, Lifetime lifetime)
     {
-        var scheduler =
-            SingleThreadScheduler.RunOnSeparateThread(lifetime, "Diagnostics Toolbox to Rider Frontend Scheduler");
+        var scheduler = SingleThreadScheduler.RunOnSeparateThread(lifetime, "Diagnostics Agent to Host Scheduler");
         var wire = new SocketWire.Server(lifetime, scheduler, new IPEndPoint(IPAddress.Loopback, port));
         var protocol = new Protocol(
-            "Diagnostics Toolbox to Rider Frontend",
+            "Diagnostics Agent to Host",
             new Serializers(),
             new Identities(IdKind.Server),
             scheduler,
@@ -51,13 +50,13 @@ internal static class DiagnosticsHost
 
         LiveCounterSessionHandler.Subscribe(model, lifetime);
         PersistentCounterSessionHandler.Subscribe(model, lifetime);
-        
+
         LiveGcEventSessionHandler.Subscribe(model, lifetime);
         PersistentGcEventSessionHandler.Subscribe(model, lifetime);
         TriggerGcCollectionHandler.Subscribe(model, lifetime);
-        
+
         LiveChartSessionHandler.Subscribe(model, lifetime);
-        
+
         LiveTraceSessionHandler.Subscribe(model, lifetime);
         PersistentTraceSessionHandler.Subscribe(model, lifetime);
     }
