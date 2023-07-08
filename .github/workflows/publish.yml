@@ -18,7 +18,7 @@ jobs:
           dotnet-version: '7.x'
 
       - name: Pack Project
-        run: dotnet pack --configuration Release
+        run: dotnet pack -c Release --nologo
 
       - name: Publish NuGet Package
         run: dotnet nuget push diagnostics-agent/bin/Release/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json

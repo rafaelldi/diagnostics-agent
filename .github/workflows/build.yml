@@ -26,14 +26,14 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           
       - name: Install dependencies
-        run: dotnet restore
+        run: dotnet restore -r ${{ matrix.runtime }}
 
       - name: Build tool
-        run: dotnet build -c Release --no-restore
+        run: dotnet build -c Release -r ${{ matrix.runtime }} --no-restore --nologo --no-self-contained
         working-directory: ./DiagnosticsAgent
 
       - name: Publish tool
-        run: dotnet publish -c Release -r ${{ matrix.runtime }} -p:PublishSingleFile=true -p:PublishTrimmed=true
+        run: dotnet publish -c Release -r ${{ matrix.runtime }} --no-restore --no-build --nologo --no-self-contained -p:PublishSingleFile=true 
         working-directory: ./DiagnosticsAgent
 
       - name: Upload artifact
