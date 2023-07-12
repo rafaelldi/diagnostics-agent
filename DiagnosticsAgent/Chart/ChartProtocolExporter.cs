@@ -1,43 +1,27 @@
 ﻿using System.Threading.Channels;
+using DiagnosticsAgent.Common.Session;
 using DiagnosticsAgent.Counters;
 using DiagnosticsAgent.Model;
-using JetBrains.Lifetimes;
 
 namespace DiagnosticsAgent.Chart;
 
-internal sealed class ChartProtocolExporter
+internal sealed class ChartProtocolExporter : ProtocolExporter<ChartProtocolSession, ValueCounter>
 {
     private const string CpuCounterName = "CPU Usage";
     private const string GcHeapSizeCounterName = "GC Heap Size";
     private const string WorkingSetCounterName = "Working Set";
 
-    private readonly LiveChartSession _session;
-    private readonly ChannelReader<ValueCounter> _reader;
-
-    internal ChartProtocolExporter(LiveChartSession session, ChannelReader<ValueCounter> reader)
+    internal ChartProtocolExporter(ChartProtocolSession session, ChannelReader<ValueCounter> reader) 
+        : base(session, reader)
     {
-        _session = session;
-        _reader = reader;
     }
 
-    internal async Task ConsumeAsync()
+    protected override void ExportToProtocol(ValueCounter value)
     {
-        try
+        var chartValue = Map(value);
+        if (chartValue is not null)
         {
-            while (await _reader.WaitToReadAsync(Lifetime.AsyncLocal.Value))
-            {
-                if (!_reader.TryRead(out var counter)) continue;
-
-                var chartValue = Map(counter);
-                if (chartValue is not null)
-                {
-                    _session.ValueReceived.Fire(chartValue);
-                }
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            //do nothing
+            Session.ValueReceived.Fire(chartValue);
         }
     }
 

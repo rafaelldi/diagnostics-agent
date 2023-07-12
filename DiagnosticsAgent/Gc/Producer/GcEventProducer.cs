@@ -1,4 +1,5 @@
 ﻿using System.Threading.Channels;
+using DiagnosticsAgent.Common.Session;
 using DiagnosticsAgent.EventPipes;
 using JetBrains.Lifetimes;
 using Microsoft.Diagnostics.NETCore.Client;
@@ -7,9 +8,9 @@ using Microsoft.Diagnostics.Tracing.Analysis;
 using Microsoft.Diagnostics.Tracing.Analysis.GC;
 using Microsoft.Diagnostics.Tracing.Parsers.Clr;
 
-namespace DiagnosticsAgent.Gc;
+namespace DiagnosticsAgent.Gc.Producer;
 
-internal sealed class GcEventProducer
+internal sealed class GcEventProducer : IValueProducer
 {
     private readonly int _pid;
     private readonly EventPipeSessionManager _sessionManager;
@@ -29,7 +30,7 @@ internal sealed class GcEventProducer
         lifetime.OnTermination(() => _writer.Complete());
     }
 
-    internal Task Produce()
+    public Task Produce()
     {
         var session = _sessionManager.StartSession(_providers, false);
         Lifetime.AsyncLocal.Value.AddDispose(session);

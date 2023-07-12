@@ -2,7 +2,7 @@
 using DiagnosticsAgent.Model;
 using JetBrains.Lifetimes;
 
-namespace DiagnosticsAgent.Counters.Exporters;
+namespace DiagnosticsAgent.Counters.Exporter;
 
 internal abstract class FileCounterExporter
 {
@@ -22,7 +22,7 @@ internal abstract class FileCounterExporter
             return;
         }
 
-        using var streamWriter = File.CreateText(_filePath);
+        await using var streamWriter = File.CreateText(_filePath);
 
         var header = GetFileHeader();
         if (header != null)
@@ -32,12 +32,9 @@ internal abstract class FileCounterExporter
 
         try
         {
-            while (await _reader.WaitToReadAsync(Lifetime.AsyncLocal.Value))
+            await foreach (var counter in _reader.ReadAllAsync(Lifetime.AsyncLocal.Value))
             {
-                if (_reader.TryRead(out var counter))
-                {
-                    await streamWriter.WriteLineAsync(GetCounterString(in counter));
-                }
+                await streamWriter.WriteLineAsync(GetCounterString(in counter));
             }
         }
         catch (OperationCanceledException)

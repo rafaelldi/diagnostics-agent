@@ -9,7 +9,7 @@
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>dotnet-diagnostics-agent</ToolCommandName>
         <PackageId>Rafaelldi.DiagnosticsAgent</PackageId>
-        <Version>2023.2.0-preview3</Version>
+        <Version>2023.2.0-preview4</Version>
         <Title>Diagnostics Agent</Title>
         <Description>.NET Diagnostics Agent</Description>
         <Authors>Rival Abdrakhmanov</Authors>

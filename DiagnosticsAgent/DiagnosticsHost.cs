@@ -48,16 +48,16 @@ internal static class DiagnosticsHost
         DumpCollectionHandler.Subscribe(model);
         StackTraceCollectionHandler.Subscribe(model);
 
-        LiveCounterSessionHandler.Subscribe(model, lifetime);
-        PersistentCounterSessionHandler.Subscribe(model, lifetime);
+        CounterProtocolSessionHandler.Subscribe(model, lifetime);
+        CounterExportSessionHandler.Subscribe(model, lifetime);
 
-        LiveGcEventSessionHandler.Subscribe(model, lifetime);
-        PersistentGcEventSessionHandler.Subscribe(model, lifetime);
+        GcEventProtocolSessionHandler.Subscribe(model, lifetime);
+        GcEventExportSessionHandler.Subscribe(model, lifetime);
         TriggerGcCollectionHandler.Subscribe(model, lifetime);
 
-        LiveChartSessionHandler.Subscribe(model, lifetime);
+        ChartProtocolSessionHandler.Subscribe(model, lifetime);
 
-        LiveTraceSessionHandler.Subscribe(model, lifetime);
-        PersistentTraceSessionHandler.Subscribe(model, lifetime);
+        TraceProtocolSessionHandler.Subscribe(model, lifetime);
+        TraceExportSessionHandler.Subscribe(model, lifetime);
     }
 }

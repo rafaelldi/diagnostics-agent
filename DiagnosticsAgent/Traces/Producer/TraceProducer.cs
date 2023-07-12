@@ -1,18 +1,19 @@
 ﻿using System.Threading.Channels;
+using DiagnosticsAgent.Common.Session;
 using DiagnosticsAgent.EventPipes;
 using DiagnosticsAgent.Traces.EventHandlers;
 using JetBrains.Lifetimes;
 using Microsoft.Diagnostics.Tracing;
 
-namespace DiagnosticsAgent.Traces;
+namespace DiagnosticsAgent.Traces.Producer;
 
-internal sealed class TraceProducer
+internal sealed class TraceProducer : IValueProducer
 {
     private readonly EventPipeSessionManager _sessionManager;
     private readonly TraceProducerConfiguration _configuration;
     private readonly List<IEventHandler> _handlers;
 
-    public TraceProducer(
+    internal TraceProducer(
         int pid,
         TraceProducerConfiguration configuration,
         ChannelWriter<ValueTrace> writer,
@@ -66,7 +67,7 @@ internal sealed class TraceProducer
         lifetime.OnTermination(() => writer.Complete());
     }
 
-    internal Task Produce()
+    public Task Produce()
     {
         var session = _sessionManager.StartSession(_configuration.EventPipeProviders, false);
         Lifetime.AsyncLocal.Value.AddDispose(session);

@@ -2,7 +2,7 @@
 using System.Text;
 using System.Threading.Channels;
 
-namespace DiagnosticsAgent.Counters.Exporters;
+namespace DiagnosticsAgent.Counters.Exporter;
 
 internal sealed class CounterJsonExporter : FileCounterExporter
 {

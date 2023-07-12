@@ -1,5 +1,5 @@
 ﻿using System.Threading.Channels;
-using DiagnosticsAgent.Counters.Exporters;
+using DiagnosticsAgent.Counters.Exporter;
 using DiagnosticsAgent.Counters.Producer;
 using DiagnosticsAgent.Model;
 using JetBrains.Collections.Viewable;
@@ -9,14 +9,14 @@ using JetBrains.Lifetimes;
 
 namespace DiagnosticsAgent.Counters;
 
-internal static class PersistentCounterSessionHandler
+internal static class CounterExportSessionHandler
 {
     internal static void Subscribe(DiagnosticsHostModel model, Lifetime lifetime)
     {
-        model.PersistentCounterSessions.View(lifetime, Handle);
+        model.CounterExportSessions.View(lifetime, Handle);
     }
 
-    private static void Handle(Lifetime lt, int pid, PersistentCounterSession session)
+    private static void Handle(Lifetime lt, int pid, CounterExportSession session)
     {
         var channel = Channel.CreateBounded<ValueCounter>(new BoundedChannelOptions(100)
         {
@@ -33,13 +33,13 @@ internal static class PersistentCounterSessionHandler
     }
 
     private static FileCounterExporter CreateExporter(
-        PersistentCounterSession session,
+        CounterExportSession session,
         Channel<ValueCounter> channel) =>
-        FileCounterExporter.Create(session.FilePath, session.Format, channel.Reader);
+        FileCounterExporter.Create(session.ExportFilePath, session.Format, channel.Reader);
 
     private static CounterProducer CreateProducer(
         int pid,
-        PersistentCounterSession session,
+        CounterExportSession session,
         Channel<ValueCounter> channel,
         Lifetime lt)
     {

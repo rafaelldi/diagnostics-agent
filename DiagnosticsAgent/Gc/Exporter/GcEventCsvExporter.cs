@@ -3,7 +3,7 @@ using System.Text;
 using System.Threading.Channels;
 using JetBrains.Lifetimes;
 
-namespace DiagnosticsAgent.Gc;
+namespace DiagnosticsAgent.Gc.Exporter;
 
 internal sealed class GcEventCsvExporter
 {
@@ -24,17 +24,14 @@ internal sealed class GcEventCsvExporter
             return;
         }
 
-        using var streamWriter = File.CreateText(_filePath);
+        await using var streamWriter = File.CreateText(_filePath);
         await streamWriter.WriteLineAsync(GetHeader());
 
         try
         {
-            while (await _reader.WaitToReadAsync(Lifetime.AsyncLocal.Value))
+            await foreach (var gcEvent in _reader.ReadAllAsync(Lifetime.AsyncLocal.Value))
             {
-                if (_reader.TryRead(out var gcEvent))
-                {
-                    await streamWriter.WriteLineAsync(GetGcEventLine(in gcEvent));
-                }
+                await streamWriter.WriteLineAsync(GetGcEventLine(in gcEvent));
             }
         }
         catch (OperationCanceledException)

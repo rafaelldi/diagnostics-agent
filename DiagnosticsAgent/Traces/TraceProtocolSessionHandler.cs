@@ -4,16 +4,16 @@ using JetBrains.Lifetimes;
 
 namespace DiagnosticsAgent.Traces;
 
-internal static class LiveTraceSessionHandler
+internal static class TraceProtocolSessionHandler
 {
     internal static void Subscribe(DiagnosticsHostModel model, Lifetime lifetime)
     {
-        model.LiveTraceSessions.View(lifetime, Handle);
+        model.TraceProtocolSessions.View(lifetime, Handle);
     }
 
-    private static void Handle(Lifetime lt, int pid, LiveTraceSession session)
+    private static void Handle(Lifetime lt, int pid, TraceProtocolSession session)
     {
-        var envelope = new LiveTraceSessionEnvelope(pid, session, lt);
+        var envelope = new TraceProtocolSessionEnvelope(pid, session, lt);
         lt.KeepAlive(envelope);
     }
 }

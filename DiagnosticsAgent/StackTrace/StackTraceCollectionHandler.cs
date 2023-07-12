@@ -7,6 +7,7 @@ using Microsoft.Diagnostics.Symbols;
 using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Etlx;
 using Microsoft.Diagnostics.Tracing.Stacks;
+// ReSharper disable SuggestBaseTypeForParameter
 
 namespace DiagnosticsAgent.StackTrace;
 
@@ -103,7 +104,6 @@ internal static class StackTraceCollectionHandler
     }
 
     private static string SerializeStackTraces(Dictionary<int, StackSourceSample> samplesByThread,
-        // ReSharper disable once SuggestBaseTypeForParameter
         MutableTraceEventStackSource stackSource)
     {
         var sb = new StringBuilder();

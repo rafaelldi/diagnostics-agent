@@ -2,7 +2,7 @@
 using DiagnosticsAgent.Model;
 using Microsoft.Diagnostics.NETCore.Client;
 
-namespace DiagnosticsAgent.Traces;
+namespace DiagnosticsAgent.Traces.Producer;
 
 internal sealed class TraceProducerConfiguration
 {

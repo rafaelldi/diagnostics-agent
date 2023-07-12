@@ -4,16 +4,16 @@ using JetBrains.Lifetimes;
 
 namespace DiagnosticsAgent.Chart;
 
-internal static class LiveChartSessionHandler
+internal static class ChartProtocolSessionHandler
 {
     internal static void Subscribe(DiagnosticsHostModel model, Lifetime lifetime)
     {
-        model.LiveChartSessions.View(lifetime, Handle);
+        model.ChartProtocolSessions.View(lifetime, Handle);
     }
 
-    private static void Handle(Lifetime lt, int pid, LiveChartSession session)
+    private static void Handle(Lifetime lt, int pid, ChartProtocolSession session)
     {
-        var envelope = new LiveChartSessionEnvelope(pid, session, lt);
+        var envelope = new ChartProtocolSessionEnvelope(pid, session, lt);
         lt.KeepAlive(envelope);
     }
 }

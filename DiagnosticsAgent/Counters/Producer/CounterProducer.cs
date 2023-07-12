@@ -1,5 +1,6 @@
 ﻿using System.Threading.Channels;
 using DiagnosticsAgent.Common;
+using DiagnosticsAgent.Common.Session;
 using DiagnosticsAgent.EventPipes;
 using JetBrains.Lifetimes;
 using Microsoft.Diagnostics.Tracing;
@@ -8,7 +9,7 @@ using Microsoft.Diagnostics.Tracing;
 
 namespace DiagnosticsAgent.Counters.Producer;
 
-internal sealed class CounterProducer
+internal sealed class CounterProducer : IValueProducer
 {
     private readonly int _pid;
     private readonly EventPipeSessionManager _sessionManager;
@@ -29,7 +30,7 @@ internal sealed class CounterProducer
         lifetime.OnTermination(() => _writer.Complete());
     }
 
-    internal Task Produce()
+    public Task Produce()
     {
         var session = _sessionManager.StartSession(_configuration.EventPipeProviders, false);
         Lifetime.AsyncLocal.Value.AddDispose(session);
