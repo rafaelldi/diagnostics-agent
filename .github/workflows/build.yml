@@ -12,9 +12,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        runtime: [ 'win-x64', 'linux-x64', 'osx-x64' ]
     steps:
 
       - name: Fetch Sources
@@ -26,21 +23,21 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           
       - name: Install dependencies
-        run: dotnet restore -r ${{ matrix.runtime }}
+        run: dotnet restore
 
       - name: Build tool
-        run: dotnet build -c Release -r ${{ matrix.runtime }} --no-restore --nologo --no-self-contained
+        run: dotnet build -c Release --no-restore --nologo
         working-directory: ./DiagnosticsAgent
 
       - name: Publish tool
-        run: dotnet publish -c Release -r ${{ matrix.runtime }} --no-restore --no-build --nologo --no-self-contained -p:PublishSingleFile=true 
+        run: dotnet publish -c Release --no-restore --no-build --nologo -p:PublishSingleFile=true
         working-directory: ./DiagnosticsAgent
 
       - name: Upload artifact
         uses: actions/upload-artifact@main
         with:
-          name: diagnostics-agent-${{ matrix.runtime }}
-          path: DiagnosticsAgent/bin/Release/net7.0/${{ matrix.runtime }}/publish/
+          name: diagnostics-agent
+          path: DiagnosticsAgent/bin/Release/net7.0/publish/
 
   test:
     name: Test
