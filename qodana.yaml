@@ -10,5 +10,7 @@ dotnet:
 exclude:
   - name: All
     paths:
+      - Model
       - DiagnosticsAgent/Generated
-      - DiagnosticsAgentTests
+      - DiagnosticsAgent.Tests
+      - DiagnosticsAgent.Benchmarks

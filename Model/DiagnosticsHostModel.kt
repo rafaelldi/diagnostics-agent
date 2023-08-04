@@ -70,7 +70,7 @@ object DiagnosticsHostModel : Ext(DiagnosticsHostRoot) {
     }
 
     private val CounterProtocolSession = classdef extends ProtocolSession {
-        map("counters", string, Counter).async
+        source("counterReceived", Counter).async
         field("refreshInterval", int)
         field("providers", string)
         field("metrics", string.nullable)
@@ -153,7 +153,6 @@ object DiagnosticsHostModel : Ext(DiagnosticsHostRoot) {
 
         map("gcEventExportSessions", int, GcEventExportSession)
         map("gcEventProtocolSessions", int, GcEventProtocolSession)
-        source("triggerGc", int)
 
         map("traceExportSessions", int, TraceExportSession)
         map("traceProtocolSessions", int, TraceProtocolSession)

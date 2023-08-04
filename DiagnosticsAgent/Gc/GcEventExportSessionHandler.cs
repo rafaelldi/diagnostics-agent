@@ -27,6 +27,6 @@ internal static class GcEventExportSessionHandler
         var producer = new GcEventProducer(pid, channel.Writer, lt);
 
         lt.StartAttachedAsync(TaskScheduler.Default, async () => await exporter.ConsumeAsync());
-        lt.StartAttachedAsync(TaskScheduler.Default, async () => await producer.Produce());
+        lt.StartAttachedAsync(TaskScheduler.Default, async () => await producer.ProduceAsync());
     }
 }

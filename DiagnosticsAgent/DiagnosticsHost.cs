@@ -53,11 +53,10 @@ internal static class DiagnosticsHost
 
         GcEventProtocolSessionHandler.Subscribe(model, lifetime);
         GcEventExportSessionHandler.Subscribe(model, lifetime);
-        TriggerGcCollectionHandler.Subscribe(model, lifetime);
-
-        ChartProtocolSessionHandler.Subscribe(model, lifetime);
 
         TraceProtocolSessionHandler.Subscribe(model, lifetime);
         TraceExportSessionHandler.Subscribe(model, lifetime);
+
+        ChartProtocolSessionHandler.Subscribe(model, lifetime);
     }
 }

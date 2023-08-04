@@ -1,13 +1,14 @@
 ﻿using System.Threading.Channels;
+using DiagnosticsAgent.EventPipes;
 using DiagnosticsAgent.Model;
 using JetBrains.Lifetimes;
 using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Parsers;
 using Microsoft.Diagnostics.Tracing.Parsers.Tpl;
 
-namespace DiagnosticsAgent.Traces.EventHandlers;
+namespace DiagnosticsAgent.Traces.Producer.EventHandlers;
 
-internal sealed class TaskEventHandler : IEventHandler
+internal sealed class TaskEventHandler : IEventPipeEventHandler
 {
     private readonly int _pid;
     private readonly ChannelWriter<ValueTrace> _writer;
@@ -18,22 +19,22 @@ internal sealed class TaskEventHandler : IEventHandler
         _writer = writer;
     }
 
-    public void SubscribeToEvents(EventPipeEventSource source)
+    public void SubscribeToEvents(EventPipeEventSource source, Lifetime lifetime)
     {
         var parser = new TplEtwProviderTraceEventParser(source);
-        Lifetime.AsyncLocal.Value.Bracket(
+        lifetime.Bracket(
             () => parser.TaskScheduledSend += HandleTaskScheduledSendEvent,
             () => parser.TaskScheduledSend -= HandleTaskScheduledSendEvent
         );
-        Lifetime.AsyncLocal.Value.Bracket(
+        lifetime.Bracket(
             () => parser.TaskExecuteStart += HandleTaskExecuteStartEvent,
             () => parser.TaskExecuteStart -= HandleTaskExecuteStartEvent
         );
-        Lifetime.AsyncLocal.Value.Bracket(
+        lifetime.Bracket(
             () => parser.TaskExecuteStop += HandleTaskExecuteStopEvent,
             () => parser.TaskExecuteStop -= HandleTaskExecuteStopEvent
         );
-        Lifetime.AsyncLocal.Value.Bracket(
+        lifetime.Bracket(
             () => parser.TaskWaitSend += HandleTaskWaitSendEvent,
             () => parser.TaskWaitSend -= HandleTaskWaitSendEvent
         );

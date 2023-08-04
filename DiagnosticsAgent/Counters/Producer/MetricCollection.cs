@@ -4,14 +4,15 @@ namespace DiagnosticsAgent.Counters.Producer;
 
 internal sealed class MetricCollection
 {
+    private readonly Dictionary<string, string[]?> _metrics;
     internal string Metrics { get; }
 
     internal MetricCollection(string metricCollectionString)
     {
-        var meters = CounterCollectionParser.Parse(metricCollectionString.AsSpan());
+        _metrics = CounterCollectionParser.Parse(metricCollectionString.AsSpan());
 
         var sb = new StringBuilder();
-        foreach (var meter in meters)
+        foreach (var meter in _metrics)
         {
             if (meter.Value is not null)
             {
@@ -32,5 +33,15 @@ internal sealed class MetricCollection
         }
 
         Metrics = sb.ToString();
+    }
+
+    internal bool Contains(string meter, string instrument)
+    {
+        if (!_metrics.TryGetValue(meter, out var metrics))
+        {
+            return false;
+        }
+
+        return metrics is null || metrics.Contains(instrument);
     }
 }

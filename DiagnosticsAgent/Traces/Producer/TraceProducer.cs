@@ -1,7 +1,7 @@
 ﻿using System.Threading.Channels;
 using DiagnosticsAgent.Common.Session;
 using DiagnosticsAgent.EventPipes;
-using DiagnosticsAgent.Traces.EventHandlers;
+using DiagnosticsAgent.Traces.Producer.EventHandlers;
 using JetBrains.Lifetimes;
 using Microsoft.Diagnostics.Tracing;
 
@@ -9,9 +9,9 @@ namespace DiagnosticsAgent.Traces.Producer;
 
 internal sealed class TraceProducer : IValueProducer
 {
-    private readonly EventPipeSessionManager _sessionManager;
+    private readonly EventPipeSessionProvider _sessionProvider;
     private readonly TraceProducerConfiguration _configuration;
-    private readonly List<IEventHandler> _handlers;
+    private readonly List<IEventPipeEventHandler> _handlers;
 
     internal TraceProducer(
         int pid,
@@ -19,10 +19,10 @@ internal sealed class TraceProducer : IValueProducer
         ChannelWriter<ValueTrace> writer,
         Lifetime lifetime)
     {
-        _sessionManager = new EventPipeSessionManager(pid);
+        _sessionProvider = new EventPipeSessionProvider(pid);
         _configuration = configuration;
 
-        _handlers = new List<IEventHandler>(8);
+        _handlers = new List<IEventPipeEventHandler>(8);
 
         if (_configuration.IsHttpEnabled)
         {
@@ -67,27 +67,21 @@ internal sealed class TraceProducer : IValueProducer
         lifetime.OnTermination(() => writer.Complete());
     }
 
-    public Task Produce()
+    public async Task ProduceAsync()
     {
-        var session = _sessionManager.StartSession(_configuration.EventPipeProviders, false);
-        Lifetime.AsyncLocal.Value.AddDispose(session);
-
-        var source = new EventPipeEventSource(session.EventStream);
-        Lifetime.AsyncLocal.Value.AddDispose(source);
-
-        SubscribeToEvents(source);
-
-        var cancellationToken = Lifetime.AsyncLocal.Value.ToCancellationToken();
-        cancellationToken.Register(() => EventPipeSessionManager.StopSession(session));
-
-        return Task.Run(() => source.Process(), Lifetime.AsyncLocal.Value);
+        var sessionConfiguration = _configuration.GetSessionConfiguration();
+        await _sessionProvider.RunSessionAndSubscribeAsync(
+            sessionConfiguration,
+            Lifetime.AsyncLocal.Value,
+            SubscribeToEvents
+        );
     }
 
-    private void SubscribeToEvents(EventPipeEventSource source)
+    private void SubscribeToEvents(EventPipeEventSource source, Lifetime lifetime)
     {
         foreach (var handler in _handlers)
         {
-            handler.SubscribeToEvents(source);
+            handler.SubscribeToEvents(source, lifetime);
         }
     }
 }

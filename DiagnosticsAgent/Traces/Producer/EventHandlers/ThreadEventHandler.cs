@@ -1,12 +1,13 @@
 ﻿using System.Threading.Channels;
+using DiagnosticsAgent.EventPipes;
 using DiagnosticsAgent.Model;
 using JetBrains.Lifetimes;
 using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Parsers.Clr;
 
-namespace DiagnosticsAgent.Traces.EventHandlers;
+namespace DiagnosticsAgent.Traces.Producer.EventHandlers;
 
-internal sealed class ThreadEventHandler : IEventHandler
+internal sealed class ThreadEventHandler : IEventPipeEventHandler
 {
     private readonly int _pid;
     private readonly ChannelWriter<ValueTrace> _writer;
@@ -17,25 +18,25 @@ internal sealed class ThreadEventHandler : IEventHandler
         _writer = writer;
     }
 
-    public void SubscribeToEvents(EventPipeEventSource source)
+    public void SubscribeToEvents(EventPipeEventSource source, Lifetime lifetime)
     {
-        Lifetime.AsyncLocal.Value.Bracket(
+        lifetime.Bracket(
             () => source.Clr.ThreadCreating += HandleThreadCreatingEvent,
             () => source.Clr.ThreadCreating -= HandleThreadCreatingEvent
         );
-        Lifetime.AsyncLocal.Value.Bracket(
+        lifetime.Bracket(
             () => source.Clr.ThreadRunning += HandleThreadRunningEvent,
             () => source.Clr.ThreadRunning -= HandleThreadRunningEvent
         );
-        Lifetime.AsyncLocal.Value.Bracket(
+        lifetime.Bracket(
             () => source.Clr.ThreadPoolWorkerThreadStart += HandleThreadPoolWorkerThreadStartEvent,
             () => source.Clr.ThreadPoolWorkerThreadStart -= HandleThreadPoolWorkerThreadStartEvent
         );
-        Lifetime.AsyncLocal.Value.Bracket(
+        lifetime.Bracket(
             () => source.Clr.ThreadPoolWorkerThreadStop += HandleThreadPoolWorkerThreadStopEvent,
             () => source.Clr.ThreadPoolWorkerThreadStop -= HandleThreadPoolWorkerThreadStopEvent
         );
-        Lifetime.AsyncLocal.Value.Bracket(
+        lifetime.Bracket(
             () => source.Clr.ThreadPoolWorkerThreadWait += HandleThreadPoolWorkerThreadWaitEvent,
             () => source.Clr.ThreadPoolWorkerThreadWait -= HandleThreadPoolWorkerThreadWaitEvent
         );

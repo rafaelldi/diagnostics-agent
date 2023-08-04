@@ -76,7 +76,7 @@ public class CounterCollectionParserTests
         provider.Should().NotBeNull();
         provider.Should().NotBeEmpty();
         provider.Should().Contain("cpu-usage");
-        provider!.Count.Should().Be(1);
+        provider!.Length.Should().Be(1);
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class CounterCollectionParserTests
         provider.Should().NotBeNull();
         provider.Should().NotBeEmpty();
         provider.Should().Contain("cpu-usage");
-        provider!.Count.Should().Be(1);
+        provider!.Length.Should().Be(1);
     }
 
     [Fact]
@@ -137,11 +137,31 @@ public class CounterCollectionParserTests
     {
         var countersString = "System.Runtime[cpu-usage],MyEventCounterSource[my-counter]";
         var counters = CounterCollectionParser.Parse(countersString.AsSpan());
-        var runtimeProvider = counters["System.Runtime"];
 
+        var runtimeProvider = counters["System.Runtime"];
         runtimeProvider.Should().NotBeNull();
         runtimeProvider.Should().NotBeEmpty();
         runtimeProvider.Should().Contain("cpu-usage");
+
+        var customProvider = counters["MyEventCounterSource"];
+        customProvider.Should().NotBeNull();
+        customProvider.Should().NotBeEmpty();
+        customProvider.Should().Contain("my-counter");
+    }
+
+    [Fact]
+    public void Remove_spaces_from_providers_and_metrics()
+    {
+        var countersString = " System.Runtime [ cpu-usage , alloc-rate , exception-count ] , MyEventCounterSource [ my-counter ] ";
+        var counters = CounterCollectionParser.Parse(countersString.AsSpan());
+        
+        var runtimeProvider = counters["System.Runtime"];
+        runtimeProvider.Should().NotBeNull();
+        runtimeProvider.Should().NotBeEmpty();
+        runtimeProvider.Should().Contain("cpu-usage");
+        runtimeProvider.Should().Contain("alloc-rate");
+        runtimeProvider.Should().Contain("exception-count");
+
         var customProvider = counters["MyEventCounterSource"];
         customProvider.Should().NotBeNull();
         customProvider.Should().NotBeEmpty();

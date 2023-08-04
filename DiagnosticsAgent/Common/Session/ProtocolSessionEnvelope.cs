@@ -37,6 +37,6 @@ internal abstract class ProtocolSessionEnvelope<TSession, TValue> where TSession
     private void Handle(Lifetime lt)
     {
         lt.StartAttachedAsync(TaskScheduler.Default, async () => await _consumer.Consume());
-        lt.StartAttachedAsync(TaskScheduler.Default, async () => await _producer.Produce());
+        lt.StartAttachedAsync(TaskScheduler.Default, async () => await _producer.ProduceAsync());
     }
 }

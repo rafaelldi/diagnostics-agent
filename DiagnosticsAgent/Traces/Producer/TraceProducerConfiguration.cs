@@ -6,7 +6,6 @@ namespace DiagnosticsAgent.Traces.Producer;
 
 internal sealed class TraceProducerConfiguration
 {
-    internal IReadOnlyCollection<EventPipeProvider> EventPipeProviders { get; }
     internal bool IsHttpEnabled { get; }
     internal bool IsAspNetEnabled { get; }
     internal bool IsEfEnabled { get; }
@@ -15,6 +14,7 @@ internal sealed class TraceProducerConfiguration
     internal bool IsContentionsEnabled { get; }
     internal bool IsTasksEnabled { get; }
     internal bool IsLoaderEnabled { get; }
+    private IReadOnlyCollection<EventPipeProvider> EventPipeProviders { get; }
 
     internal TraceProducerConfiguration(List<PredefinedProvider> providers)
     {
@@ -29,4 +29,6 @@ internal sealed class TraceProducerConfiguration
         IsTasksEnabled = providers.Contains(PredefinedProvider.Tasks);
         IsLoaderEnabled = providers.Contains(PredefinedProvider.Loader);
     }
+
+    internal EventPipeSessionConfiguration GetSessionConfiguration() => new(EventPipeProviders, false);
 }

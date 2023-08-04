@@ -2,8 +2,6 @@
 using Microsoft.Diagnostics.NETCore.Client;
 using static DiagnosticsAgent.EventPipes.EventPipeProviderFactory;
 
-// ReSharper disable ParameterTypeCanBeEnumerable.Local
-
 namespace DiagnosticsAgent.Traces;
 
 internal sealed class TraceProviderCollection

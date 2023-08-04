@@ -14,19 +14,17 @@ internal static class TraceExportSessionHandler
 
     private static void Handle(Lifetime lt, int pid, TraceExportSession session)
     {
+        var sessionProvider = new EventPipeSessionProvider(pid);
         var providers = new TraceProviderCollection(session.Providers, session.Profile, session.PredefinedProviders);
-        var sessionManager = new EventPipeSessionManager(pid);
-        var eventPipeSession = sessionManager.StartSession(providers.EventPipeProviders);
-        lt.AddDispose(eventPipeSession);
-        
-        var fileStream = new FileStream(session.ExportFilePath, FileMode.Create, FileAccess.Write);
-        lt.AddDispose(fileStream);
+        var sessionConfiguration = new EventPipeSessionConfiguration(providers.EventPipeProviders);
 
-        var cancellationToken = lt.ToCancellationToken();
-        cancellationToken.Register(() => EventPipeSessionManager.StopSession(eventPipeSession));
-
-        // ReSharper disable once MethodSupportsCancellation
-        var copyTask = eventPipeSession.EventStream.CopyToAsync(fileStream, 81920);
-        lt.StartAttachedAsync(TaskScheduler.Default, async () => await copyTask);
+        lt.StartAttachedAsync(
+            TaskScheduler.Default,
+            async () => await sessionProvider.RunSessionAndCopyToFileAsync(
+                sessionConfiguration,
+                Lifetime.AsyncLocal.Value,
+                session.ExportFilePath
+            )
+        );
     }
 }

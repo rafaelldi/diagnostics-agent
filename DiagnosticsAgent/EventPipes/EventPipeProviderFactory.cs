@@ -4,8 +4,6 @@ using Microsoft.Diagnostics.NETCore.Client;
 using Microsoft.Diagnostics.Tracing.Parsers;
 using static DiagnosticsAgent.Common.Providers;
 
-// ReSharper disable ParameterTypeCanBeEnumerable.Global
-
 namespace DiagnosticsAgent.EventPipes;
 
 internal static class EventPipeProviderFactory
@@ -71,11 +69,5 @@ internal static class EventPipeProviderFactory
         DotNetRuntimeProvider,
         EventLevel.Informational,
         (long)ClrTraceEventParser.Keywords.GC
-    );
-
-    internal static EventPipeProvider CreateGcHeapCollect() => new(
-        DotNetRuntimeProvider,
-        EventLevel.Informational,
-        (long)ClrTraceEventParser.Keywords.GCHeapCollect
     );
 }

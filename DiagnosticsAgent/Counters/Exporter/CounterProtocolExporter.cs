@@ -13,7 +13,6 @@ internal sealed class CounterProtocolExporter : ProtocolExporter<CounterProtocol
 
     protected override void ExportToProtocol(ValueCounter value)
     {
-        var key = string.IsNullOrEmpty(value.Tags) ? value.Name : $"{value.Name}-{value.Tags}";
-        Session.Counters[key] = new Counter(value.DisplayName, value.Tags, value.Value);
+        Session.CounterReceived.Fire(new Counter(value.DisplayName, value.Tags, value.Value));
     }
 }

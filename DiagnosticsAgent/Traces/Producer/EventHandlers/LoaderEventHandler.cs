@@ -1,12 +1,13 @@
 ﻿using System.Threading.Channels;
+using DiagnosticsAgent.EventPipes;
 using DiagnosticsAgent.Model;
 using JetBrains.Lifetimes;
 using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Parsers.Clr;
 
-namespace DiagnosticsAgent.Traces.EventHandlers;
+namespace DiagnosticsAgent.Traces.Producer.EventHandlers;
 
-internal sealed class LoaderEventHandler : IEventHandler
+internal sealed class LoaderEventHandler : IEventPipeEventHandler
 {
     private readonly int _pid;
     private readonly ChannelWriter<ValueTrace> _writer;
@@ -17,13 +18,13 @@ internal sealed class LoaderEventHandler : IEventHandler
         _writer = writer;
     }
 
-    public void SubscribeToEvents(EventPipeEventSource source)
+    public void SubscribeToEvents(EventPipeEventSource source, Lifetime lifetime)
     {
-        Lifetime.AsyncLocal.Value.Bracket(
+        lifetime.Bracket(
             () => source.Clr.LoaderAssemblyLoad += HandleLoaderAssemblyLoadEvent,
             () => source.Clr.LoaderAssemblyLoad -= HandleLoaderAssemblyLoadEvent
         );
-        Lifetime.AsyncLocal.Value.Bracket(
+        lifetime.Bracket(
             () => source.Clr.LoaderAssemblyUnload += HandleLoaderAssemblyUnloadEvent,
             () => source.Clr.LoaderAssemblyUnload -= HandleLoaderAssemblyUnloadEvent
         );

@@ -47,7 +47,6 @@ namespace DiagnosticsAgent.Model
     [NotNull] public IViewableMap<int, CounterProtocolSession> CounterProtocolSessions => _CounterProtocolSessions;
     [NotNull] public IViewableMap<int, GcEventExportSession> GcEventExportSessions => _GcEventExportSessions;
     [NotNull] public IViewableMap<int, GcEventProtocolSession> GcEventProtocolSessions => _GcEventProtocolSessions;
-    [NotNull] public ISource<int> TriggerGc => _TriggerGc;
     [NotNull] public IViewableMap<int, TraceExportSession> TraceExportSessions => _TraceExportSessions;
     [NotNull] public IViewableMap<int, TraceProtocolSession> TraceProtocolSessions => _TraceProtocolSessions;
     [NotNull] public IViewableMap<int, ChartProtocolSession> ChartProtocolSessions => _ChartProtocolSessions;
@@ -59,7 +58,6 @@ namespace DiagnosticsAgent.Model
     [NotNull] private readonly RdMap<int, CounterProtocolSession> _CounterProtocolSessions;
     [NotNull] private readonly RdMap<int, GcEventExportSession> _GcEventExportSessions;
     [NotNull] private readonly RdMap<int, GcEventProtocolSession> _GcEventProtocolSessions;
-    [NotNull] private readonly RdSignal<int> _TriggerGc;
     [NotNull] private readonly RdMap<int, TraceExportSession> _TraceExportSessions;
     [NotNull] private readonly RdMap<int, TraceProtocolSession> _TraceProtocolSessions;
     [NotNull] private readonly RdMap<int, ChartProtocolSession> _ChartProtocolSessions;
@@ -73,7 +71,6 @@ namespace DiagnosticsAgent.Model
       [NotNull] RdMap<int, CounterProtocolSession> counterProtocolSessions,
       [NotNull] RdMap<int, GcEventExportSession> gcEventExportSessions,
       [NotNull] RdMap<int, GcEventProtocolSession> gcEventProtocolSessions,
-      [NotNull] RdSignal<int> triggerGc,
       [NotNull] RdMap<int, TraceExportSession> traceExportSessions,
       [NotNull] RdMap<int, TraceProtocolSession> traceProtocolSessions,
       [NotNull] RdMap<int, ChartProtocolSession> chartProtocolSessions,
@@ -86,7 +83,6 @@ namespace DiagnosticsAgent.Model
       if (counterProtocolSessions == null) throw new ArgumentNullException("counterProtocolSessions");
       if (gcEventExportSessions == null) throw new ArgumentNullException("gcEventExportSessions");
       if (gcEventProtocolSessions == null) throw new ArgumentNullException("gcEventProtocolSessions");
-      if (triggerGc == null) throw new ArgumentNullException("triggerGc");
       if (traceExportSessions == null) throw new ArgumentNullException("traceExportSessions");
       if (traceProtocolSessions == null) throw new ArgumentNullException("traceProtocolSessions");
       if (chartProtocolSessions == null) throw new ArgumentNullException("chartProtocolSessions");
@@ -98,7 +94,6 @@ namespace DiagnosticsAgent.Model
       _CounterProtocolSessions = counterProtocolSessions;
       _GcEventExportSessions = gcEventExportSessions;
       _GcEventProtocolSessions = gcEventProtocolSessions;
-      _TriggerGc = triggerGc;
       _TraceExportSessions = traceExportSessions;
       _TraceProtocolSessions = traceProtocolSessions;
       _ChartProtocolSessions = chartProtocolSessions;
@@ -109,7 +104,6 @@ namespace DiagnosticsAgent.Model
       BindableChildren.Add(new KeyValuePair<string, object>("counterProtocolSessions", _CounterProtocolSessions));
       BindableChildren.Add(new KeyValuePair<string, object>("gcEventExportSessions", _GcEventExportSessions));
       BindableChildren.Add(new KeyValuePair<string, object>("gcEventProtocolSessions", _GcEventProtocolSessions));
-      BindableChildren.Add(new KeyValuePair<string, object>("triggerGc", _TriggerGc));
       BindableChildren.Add(new KeyValuePair<string, object>("traceExportSessions", _TraceExportSessions));
       BindableChildren.Add(new KeyValuePair<string, object>("traceProtocolSessions", _TraceProtocolSessions));
       BindableChildren.Add(new KeyValuePair<string, object>("chartProtocolSessions", _ChartProtocolSessions));
@@ -124,7 +118,6 @@ namespace DiagnosticsAgent.Model
       new RdMap<int, CounterProtocolSession>(JetBrains.Rd.Impl.Serializers.ReadInt, JetBrains.Rd.Impl.Serializers.WriteInt, CounterProtocolSession.Read, CounterProtocolSession.Write),
       new RdMap<int, GcEventExportSession>(JetBrains.Rd.Impl.Serializers.ReadInt, JetBrains.Rd.Impl.Serializers.WriteInt, GcEventExportSession.Read, GcEventExportSession.Write),
       new RdMap<int, GcEventProtocolSession>(JetBrains.Rd.Impl.Serializers.ReadInt, JetBrains.Rd.Impl.Serializers.WriteInt, GcEventProtocolSession.Read, GcEventProtocolSession.Write),
-      new RdSignal<int>(JetBrains.Rd.Impl.Serializers.ReadInt, JetBrains.Rd.Impl.Serializers.WriteInt),
       new RdMap<int, TraceExportSession>(JetBrains.Rd.Impl.Serializers.ReadInt, JetBrains.Rd.Impl.Serializers.WriteInt, TraceExportSession.Read, TraceExportSession.Write),
       new RdMap<int, TraceProtocolSession>(JetBrains.Rd.Impl.Serializers.ReadInt, JetBrains.Rd.Impl.Serializers.WriteInt, TraceProtocolSession.Read, TraceProtocolSession.Write),
       new RdMap<int, ChartProtocolSession>(JetBrains.Rd.Impl.Serializers.ReadInt, JetBrains.Rd.Impl.Serializers.WriteInt, ChartProtocolSession.Read, ChartProtocolSession.Write),
@@ -136,7 +129,7 @@ namespace DiagnosticsAgent.Model
     
     
     
-    protected override long SerializationHash => -8675798238511011822L;
+    protected override long SerializationHash => 7667229416102078676L;
     
     protected override Action<ISerializers> Register => RegisterDeclaredTypesSerializers;
     public static void RegisterDeclaredTypesSerializers(ISerializers serializers)
@@ -176,7 +169,6 @@ namespace DiagnosticsAgent.Model
         printer.Print("counterProtocolSessions = "); _CounterProtocolSessions.PrintEx(printer); printer.Println();
         printer.Print("gcEventExportSessions = "); _GcEventExportSessions.PrintEx(printer); printer.Println();
         printer.Print("gcEventProtocolSessions = "); _GcEventProtocolSessions.PrintEx(printer); printer.Println();
-        printer.Print("triggerGc = "); _TriggerGc.PrintEx(printer); printer.Println();
         printer.Print("traceExportSessions = "); _TraceExportSessions.PrintEx(printer); printer.Println();
         printer.Print("traceProtocolSessions = "); _TraceProtocolSessions.PrintEx(printer); printer.Println();
         printer.Print("chartProtocolSessions = "); _ChartProtocolSessions.PrintEx(printer); printer.Println();
@@ -390,7 +382,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:164</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:163</p>
   /// </summary>
   public sealed class CollectDumpCommand : IPrintable, IEquatable<CollectDumpCommand>
   {
@@ -508,7 +500,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:181</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:180</p>
   /// </summary>
   public sealed class CollectStackTraceCommand : IPrintable, IEquatable<CollectStackTraceCommand>
   {
@@ -816,7 +808,7 @@ namespace DiagnosticsAgent.Model
   {
     //fields
     //public fields
-    [NotNull] public IViewableMap<string, Counter> Counters => _Counters;
+    [NotNull] public ISignal<Counter> CounterReceived => _CounterReceived;
     public int RefreshInterval {get; private set;}
     [NotNull] public string Providers {get; private set;}
     [CanBeNull] public string Metrics {get; private set;}
@@ -824,11 +816,11 @@ namespace DiagnosticsAgent.Model
     public int MaxHistograms {get; private set;}
     
     //private fields
-    [NotNull] private readonly RdMap<string, Counter> _Counters;
+    [NotNull] private readonly RdSignal<Counter> _CounterReceived;
     
     //primary constructor
     private CounterProtocolSession(
-      [NotNull] RdMap<string, Counter> counters,
+      [NotNull] RdSignal<Counter> counterReceived,
       int refreshInterval,
       [NotNull] string providers,
       [CanBeNull] string metrics,
@@ -841,18 +833,17 @@ namespace DiagnosticsAgent.Model
       duration
      ) 
     {
-      if (counters == null) throw new ArgumentNullException("counters");
+      if (counterReceived == null) throw new ArgumentNullException("counterReceived");
       if (providers == null) throw new ArgumentNullException("providers");
       
-      _Counters = counters;
+      _CounterReceived = counterReceived;
       RefreshInterval = refreshInterval;
       Providers = providers;
       Metrics = metrics;
       MaxTimeSeries = maxTimeSeries;
       MaxHistograms = maxHistograms;
-      _Counters.OptimizeNested = true;
-      _Counters.Async = true;
-      BindableChildren.Add(new KeyValuePair<string, object>("counters", _Counters));
+      _CounterReceived.Async = true;
+      BindableChildren.Add(new KeyValuePair<string, object>("counterReceived", _CounterReceived));
     }
     //secondary constructor
     public CounterProtocolSession (
@@ -862,7 +853,7 @@ namespace DiagnosticsAgent.Model
       int maxTimeSeries,
       int maxHistograms
     ) : this (
-      new RdMap<string, Counter>(JetBrains.Rd.Impl.Serializers.ReadString, JetBrains.Rd.Impl.Serializers.WriteString, Counter.Read, Counter.Write),
+      new RdSignal<Counter>(Counter.Read, Counter.Write),
       refreshInterval,
       providers,
       metrics,
@@ -879,13 +870,13 @@ namespace DiagnosticsAgent.Model
       var _id = RdId.Read(reader);
       var active = RdProperty<bool>.Read(ctx, reader, JetBrains.Rd.Impl.Serializers.ReadBool, JetBrains.Rd.Impl.Serializers.WriteBool);
       var duration = RdProperty<int?>.Read(ctx, reader, ReadIntNullable, WriteIntNullable);
-      var counters = RdMap<string, Counter>.Read(ctx, reader, JetBrains.Rd.Impl.Serializers.ReadString, JetBrains.Rd.Impl.Serializers.WriteString, Counter.Read, Counter.Write);
+      var counterReceived = RdSignal<Counter>.Read(ctx, reader, Counter.Read, Counter.Write);
       var refreshInterval = reader.ReadInt();
       var providers = reader.ReadString();
       var metrics = ReadStringNullable(ctx, reader);
       var maxTimeSeries = reader.ReadInt();
       var maxHistograms = reader.ReadInt();
-      var _result = new CounterProtocolSession(counters, refreshInterval, providers, metrics, maxTimeSeries, maxHistograms, active, duration).WithId(_id);
+      var _result = new CounterProtocolSession(counterReceived, refreshInterval, providers, metrics, maxTimeSeries, maxHistograms, active, duration).WithId(_id);
       return _result;
     };
     public static CtxReadDelegate<string> ReadStringNullable = JetBrains.Rd.Impl.Serializers.ReadString.NullableClass();
@@ -896,7 +887,7 @@ namespace DiagnosticsAgent.Model
       value.RdId.Write(writer);
       RdProperty<bool>.Write(ctx, writer, value._Active);
       RdProperty<int?>.Write(ctx, writer, value._Duration);
-      RdMap<string, Counter>.Write(ctx, writer, value._Counters);
+      RdSignal<Counter>.Write(ctx, writer, value._CounterReceived);
       writer.Write(value.RefreshInterval);
       writer.Write(value.Providers);
       WriteStringNullable(ctx, writer, value.Metrics);
@@ -917,7 +908,7 @@ namespace DiagnosticsAgent.Model
     {
       printer.Println("CounterProtocolSession (");
       using (printer.IndentCookie()) {
-        printer.Print("counters = "); _Counters.PrintEx(printer); printer.Println();
+        printer.Print("counterReceived = "); _CounterReceived.PrintEx(printer); printer.Println();
         printer.Print("refreshInterval = "); RefreshInterval.PrintEx(printer); printer.Println();
         printer.Print("providers = "); Providers.PrintEx(printer); printer.Println();
         printer.Print("metrics = "); Metrics.PrintEx(printer); printer.Println();
@@ -939,7 +930,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:175</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:174</p>
   /// </summary>
   public sealed class DumpCollectionResult : IPrintable, IEquatable<DumpCollectionResult>
   {
@@ -1024,7 +1015,7 @@ namespace DiagnosticsAgent.Model
   
   
   /// <summary>
-  /// <p>Generated from: DiagnosticsHostModel.kt:166</p>
+  /// <p>Generated from: DiagnosticsHostModel.kt:165</p>
   /// </summary>
   public enum DumpType {
     Full,

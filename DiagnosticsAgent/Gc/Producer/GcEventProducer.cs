@@ -13,7 +13,7 @@ namespace DiagnosticsAgent.Gc.Producer;
 internal sealed class GcEventProducer : IValueProducer
 {
     private readonly int _pid;
-    private readonly EventPipeSessionManager _sessionManager;
+    private readonly EventPipeSessionProvider _sessionProvider;
     private readonly ChannelWriter<ValueGcEvent> _writer;
     private readonly EventPipeProvider[] _providers;
 
@@ -23,32 +23,30 @@ internal sealed class GcEventProducer : IValueProducer
         Lifetime lifetime)
     {
         _pid = pid;
-        _sessionManager = new EventPipeSessionManager(pid);
+        _sessionProvider = new EventPipeSessionProvider(pid);
         _writer = writer;
         _providers = new[] { EventPipeProviderFactory.CreateGcProvider() };
 
         lifetime.OnTermination(() => _writer.Complete());
     }
 
-    public Task Produce()
+    public async Task ProduceAsync()
     {
-        var session = _sessionManager.StartSession(_providers, false);
-        Lifetime.AsyncLocal.Value.AddDispose(session);
+        var sessionConfiguration = new EventPipeSessionConfiguration(_providers, false);
+        await _sessionProvider.RunSessionAndSubscribeAsync(
+            sessionConfiguration,
+            Lifetime.AsyncLocal.Value,
+            (source, _) => SubscribeToEvents(source)
+        );
+    }
 
-        var source = new EventPipeEventSource(session.EventStream);
-        Lifetime.AsyncLocal.Value.AddDispose(source);
-
-        var cancellationToken = Lifetime.AsyncLocal.Value.ToCancellationToken();
-        cancellationToken.Register(() => EventPipeSessionManager.StopSession(session));
-
+    private void SubscribeToEvents(EventPipeEventSource source)
+    {
         source.NeedLoadedDotNetRuntimes();
         source.AddCallbackOnProcessStart(tp =>
         {
-            tp.AddCallbackOnDotNetRuntimeLoad(runtime =>
-                runtime.GCEnd += HandleEvent);
+            tp.AddCallbackOnDotNetRuntimeLoad(runtime => runtime.GCEnd += HandleEvent);
         });
-
-        return Task.Run(() =>  source.Process(), Lifetime.AsyncLocal.Value);
     }
 
     private void HandleEvent(TraceProcess process, TraceGC gc)

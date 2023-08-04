@@ -14,7 +14,7 @@ static Command RunCommand()
 {
     var portOption = new Option<int>("--port", "Port on which the RD server will run")
     {
-        IsRequired = true,
+        IsRequired = true
     };
     portOption.AddAlias("-p");
 

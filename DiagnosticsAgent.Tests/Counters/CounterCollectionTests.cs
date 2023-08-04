@@ -4,12 +4,12 @@ using static DiagnosticsAgent.Common.Providers;
 
 namespace DiagnosticsAgentTests.Counters;
 
-public class CounterProviderCollectionTests
+public class CounterCollectionTests
 {
     [Fact]
     public void Default_provider()
     {
-        var collection = new CounterProviderCollection();
+        var collection = new CounterCollection();
         var providers = collection.Providers();
 
         providers.Count.Should().Be(1);
@@ -23,7 +23,7 @@ public class CounterProviderCollectionTests
     public void One_provider_without_counters()
     {
         var customProvider = "CustomProvider";
-        var collection = new CounterProviderCollection(customProvider);
+        var collection = new CounterCollection(customProvider);
         var providers = collection.Providers();
 
         providers.Count.Should().Be(1);
@@ -38,7 +38,7 @@ public class CounterProviderCollectionTests
     {
         var customProvider = "CustomProvider";
         var customCounter = "custom-counter";
-        var collection = new CounterProviderCollection($"{customProvider}[{customCounter}]");
+        var collection = new CounterCollection($"{customProvider}[{customCounter}]");
         var providers = collection.Providers();
 
         providers.Count.Should().Be(1);
@@ -54,7 +54,7 @@ public class CounterProviderCollectionTests
         var customProvider = "CustomProvider";
         var customCounter = "custom-counter";
         var anotherCustomCounter = "another-custom-counter";
-        var collection = new CounterProviderCollection($"{customProvider}[{customCounter},{anotherCustomCounter}]");
+        var collection = new CounterCollection($"{customProvider}[{customCounter},{anotherCustomCounter}]");
         var providers = collection.Providers();
 
         providers.Count.Should().Be(1);
@@ -71,7 +71,7 @@ public class CounterProviderCollectionTests
         var customCounter = "custom-counter";
         var anotherCustomProvider = "AnotherCustomProvider";
         var anotherCustomCounter = "another-custom-counter";
-        var collection = new CounterProviderCollection(
+        var collection = new CounterCollection(
             $"{customProvider}[{customCounter}],{anotherCustomProvider}[{anotherCustomCounter}]");
         var providers = collection.Providers();
 

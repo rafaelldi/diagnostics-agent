@@ -1,27 +1,28 @@
 ﻿using System.Text;
 using System.Threading.Channels;
 using DiagnosticsAgent.Common;
+using DiagnosticsAgent.EventPipes;
 using DiagnosticsAgent.Model;
 using JetBrains.Lifetimes;
 using Microsoft.Diagnostics.Tracing;
 
-namespace DiagnosticsAgent.Traces.EventHandlers;
+namespace DiagnosticsAgent.Traces.Producer.EventHandlers;
 
-internal sealed class AspNetEventHandler : IEventHandler
+internal sealed class EfEventHandler : IEventPipeEventHandler
 {
     private readonly int _pid;
     private readonly ChannelWriter<ValueTrace> _writer;
-    private const string Source = "Microsoft.AspNetCore";
+    private const string Source = "Microsoft.EntityFrameworkCore";
 
-    internal AspNetEventHandler(int pid, ChannelWriter<ValueTrace> writer)
+    internal EfEventHandler(int pid, ChannelWriter<ValueTrace> writer)
     {
         _pid = pid;
         _writer = writer;
     }
 
-    public void SubscribeToEvents(EventPipeEventSource source)
+    public void SubscribeToEvents(EventPipeEventSource source, Lifetime lifetime)
     {
-        Lifetime.AsyncLocal.Value.Bracket(
+        lifetime.Bracket(
             () => source.Dynamic.All += HandleEvent,
             () => source.Dynamic.All -= HandleEvent
         );
@@ -44,7 +45,7 @@ internal sealed class AspNetEventHandler : IEventHandler
             return;
         }
 
-        if (evt.EventName is not ("Activity1/Start" or "Activity1/Stop"))
+        if (evt.EventName is not ("Activity2/Start" or "Activity2/Stop"))
         {
             return;
         }
@@ -72,7 +73,7 @@ internal sealed class AspNetEventHandler : IEventHandler
 
         var trace = new ValueTrace(
             GetEventName(evt),
-            PredefinedProvider.AspNet,
+            PredefinedProvider.EF,
             evt.TimeStamp,
             sb.ToString()
         );
@@ -81,8 +82,8 @@ internal sealed class AspNetEventHandler : IEventHandler
 
     private static string GetEventName(TraceEvent evt) => evt.EventName switch
     {
-        "Activity1/Start" => "Request Started",
-        "Activity1/Stop" => "Request Finished",
+        "Activity2/Start" => "Command Started",
+        "Activity2/Stop" => "Command Executed",
         _ => evt.EventName
     };
 }

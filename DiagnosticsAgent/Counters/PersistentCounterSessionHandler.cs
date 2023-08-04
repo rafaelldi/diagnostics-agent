@@ -29,7 +29,7 @@ internal static class CounterExportSessionHandler
         var producer = CreateProducer(pid, session, channel, lt);
 
         lt.StartAttachedAsync(TaskScheduler.Default, async () => await exporter.ConsumeAsync());
-        lt.StartAttachedAsync(TaskScheduler.Default, async () => await producer.Produce());
+        lt.StartAttachedAsync(TaskScheduler.Default, async () => await producer.ProduceAsync());
     }
 
     private static FileCounterExporter CreateExporter(

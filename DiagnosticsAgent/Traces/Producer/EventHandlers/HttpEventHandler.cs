@@ -1,13 +1,14 @@
 ﻿using System.Text;
 using System.Threading.Channels;
 using DiagnosticsAgent.Common;
+using DiagnosticsAgent.EventPipes;
 using DiagnosticsAgent.Model;
 using JetBrains.Lifetimes;
 using Microsoft.Diagnostics.Tracing;
 
-namespace DiagnosticsAgent.Traces.EventHandlers;
+namespace DiagnosticsAgent.Traces.Producer.EventHandlers;
 
-internal sealed class HttpEventHandler : IEventHandler
+internal sealed class HttpEventHandler : IEventPipeEventHandler
 {
     private readonly int _pid;
     private readonly ChannelWriter<ValueTrace> _writer;
@@ -19,9 +20,9 @@ internal sealed class HttpEventHandler : IEventHandler
         _writer = writer;
     }
 
-    public void SubscribeToEvents(EventPipeEventSource source)
+    public void SubscribeToEvents(EventPipeEventSource source, Lifetime lifetime)
     {
-        Lifetime.AsyncLocal.Value.Bracket(
+        lifetime.Bracket(
             () => source.Dynamic.All += HandleEvent,
             () => source.Dynamic.All -= HandleEvent
         );

@@ -1,27 +1,28 @@
 ﻿using System.Text;
 using System.Threading.Channels;
 using DiagnosticsAgent.Common;
+using DiagnosticsAgent.EventPipes;
 using DiagnosticsAgent.Model;
 using JetBrains.Lifetimes;
 using Microsoft.Diagnostics.Tracing;
 
-namespace DiagnosticsAgent.Traces.EventHandlers;
+namespace DiagnosticsAgent.Traces.Producer.EventHandlers;
 
-internal sealed class EfEventHandler : IEventHandler
+internal sealed class AspNetEventHandler : IEventPipeEventHandler
 {
     private readonly int _pid;
     private readonly ChannelWriter<ValueTrace> _writer;
-    private const string Source = "Microsoft.EntityFrameworkCore";
+    private const string Source = "Microsoft.AspNetCore";
 
-    internal EfEventHandler(int pid, ChannelWriter<ValueTrace> writer)
+    internal AspNetEventHandler(int pid, ChannelWriter<ValueTrace> writer)
     {
         _pid = pid;
         _writer = writer;
     }
 
-    public void SubscribeToEvents(EventPipeEventSource source)
+    public void SubscribeToEvents(EventPipeEventSource source, Lifetime lifetime)
     {
-        Lifetime.AsyncLocal.Value.Bracket(
+        lifetime.Bracket(
             () => source.Dynamic.All += HandleEvent,
             () => source.Dynamic.All -= HandleEvent
         );
@@ -44,7 +45,7 @@ internal sealed class EfEventHandler : IEventHandler
             return;
         }
 
-        if (evt.EventName is not ("Activity2/Start" or "Activity2/Stop"))
+        if (evt.EventName is not ("Activity1/Start" or "Activity1/Stop"))
         {
             return;
         }
@@ -59,8 +60,8 @@ internal sealed class EfEventHandler : IEventHandler
         {
             if (!argument.TryGetValue("Key", out var key) || !argument.TryGetValue("Value", out var value)) continue;
 
-            var keyString = key?.ToString();
-            var valueString = value?.ToString();
+            var keyString = key.ToString();
+            var valueString = value.ToString();
 
             if (string.IsNullOrEmpty(keyString) || string.IsNullOrEmpty(valueString))
             {
@@ -72,7 +73,7 @@ internal sealed class EfEventHandler : IEventHandler
 
         var trace = new ValueTrace(
             GetEventName(evt),
-            PredefinedProvider.EF,
+            PredefinedProvider.AspNet,
             evt.TimeStamp,
             sb.ToString()
         );
@@ -81,8 +82,8 @@ internal sealed class EfEventHandler : IEventHandler
 
     private static string GetEventName(TraceEvent evt) => evt.EventName switch
     {
-        "Activity2/Start" => "Command Started",
-        "Activity2/Stop" => "Command Executed",
+        "Activity1/Start" => "Request Started",
+        "Activity1/Stop" => "Request Finished",
         _ => evt.EventName
     };
 }

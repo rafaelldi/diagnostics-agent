@@ -2,5 +2,5 @@
 
 internal interface IValueProducer
 {
-    Task Produce();
+    Task ProduceAsync();
 }

@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics.Tracing;
 
-// ReSharper disable ReplaceSliceWithRangeIndexer
-
 namespace DiagnosticsAgent.Traces;
 
 internal static class TraceCollectionParser

@@ -7,13 +7,14 @@ internal sealed class CounterProducerConfiguration
 {
     internal string SessionId { get; }
     internal int RefreshInterval { get; }
-    internal IReadOnlyCollection<EventPipeProvider> EventPipeProviders { get; }
-
-    private readonly CounterProviderCollection _counterProviders;
+    internal bool IsMetricsEnabled { get; }
+    private IReadOnlyCollection<EventPipeProvider> EventPipeProviders { get; }
+    private readonly CounterCollection _counters;
+    private readonly MetricCollection? _metrics;
 
     internal CounterProducerConfiguration(
         string sessionId,
-        string listOfCounterProviders,
+        string listOfCounters,
         string? listOfMetrics,
         int refreshInterval,
         int maxTimeSeries,
@@ -22,36 +23,50 @@ internal sealed class CounterProducerConfiguration
         SessionId = sessionId;
         RefreshInterval = refreshInterval;
 
-        if (string.IsNullOrEmpty(listOfCounterProviders) && string.IsNullOrEmpty(listOfMetrics))
+        if (string.IsNullOrEmpty(listOfCounters) && string.IsNullOrEmpty(listOfMetrics))
         {
-            _counterProviders = new CounterProviderCollection();
-            EventPipeProviders = EventPipeProviderFactory.CreateCounterProviders(_counterProviders.Providers(), 
-                refreshInterval);
+            _counters = new CounterCollection();
+            EventPipeProviders = EventPipeProviderFactory.CreateCounterProviders(
+                _counters.Providers(),
+                refreshInterval
+            );
         }
         else
         {
-            _counterProviders = new CounterProviderCollection(listOfCounterProviders);
+            _counters = new CounterCollection(listOfCounters);
 
             var eventPipeProviderCount = listOfMetrics is not null
-                ? _counterProviders.Count() + 1
-                : _counterProviders.Count();
+                ? _counters.Count() + 1
+                : _counters.Count();
             var eventPipeProviders = new List<EventPipeProvider>(eventPipeProviderCount);
 
-            var counterProviders = EventPipeProviderFactory.CreateCounterProviders(_counterProviders.Providers(), 
-                refreshInterval);
+            var counterProviders = EventPipeProviderFactory.CreateCounterProviders(
+                _counters.Providers(),
+                refreshInterval
+            );
             eventPipeProviders.AddRange(counterProviders);
 
             if (listOfMetrics is not null)
             {
-                var metricCollection = new MetricCollection(listOfMetrics);
-                var metricProvider = EventPipeProviderFactory.CreateMetricProvider(sessionId, metricCollection.Metrics,
-                    refreshInterval, maxTimeSeries, maxHistograms);
+                _metrics = new MetricCollection(listOfMetrics);
+                var metricProvider = EventPipeProviderFactory.CreateMetricProvider(
+                    sessionId,
+                    _metrics.Metrics,
+                    refreshInterval,
+                    maxTimeSeries,
+                    maxHistograms
+                );
                 eventPipeProviders.Add(metricProvider);
+                IsMetricsEnabled = true;
             }
 
             EventPipeProviders = eventPipeProviders.AsReadOnly();
         }
     }
 
-    internal bool IsCounterEnabled(string provider, string counter) => _counterProviders.Contains(provider, counter);
+    internal EventPipeSessionConfiguration GetSessionConfiguration() => new(EventPipeProviders, false);
+
+    internal bool IsCounterEnabled(string provider, string counter) => _counters.Contains(provider, counter);
+
+    internal bool IsMetricEnabled(string meter, string instrument) => _metrics?.Contains(meter, instrument) ?? false;
 }

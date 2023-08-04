@@ -12,11 +12,12 @@ public class CounterProducerConfigurationTests
     public void Default_configuration(string sessionId, int refreshInterval)
     {
         var configuration = new CounterProducerConfiguration(sessionId, string.Empty, null, refreshInterval, 0, 0);
+        var sessionConfiguration = configuration.GetSessionConfiguration();
 
         configuration.SessionId.Should().Be(sessionId);
         configuration.RefreshInterval.Should().Be(refreshInterval);
-        configuration.EventPipeProviders.Count.Should().Be(1);
-        var provider = configuration.EventPipeProviders.Single();
+        sessionConfiguration.EventPipeProviders.Count.Should().Be(1);
+        var provider = sessionConfiguration.EventPipeProviders.Single();
         provider.Name.Should().Be(SystemRuntimeProvider);
     }
 
@@ -26,9 +27,10 @@ public class CounterProducerConfigurationTests
     {
         var counterProvider = "CounterProvider";
         var configuration = new CounterProducerConfiguration(sessionId, counterProvider, null, refreshInterval, 0, 0);
+        var sessionConfiguration = configuration.GetSessionConfiguration();
 
-        configuration.EventPipeProviders.Count.Should().Be(1);
-        var provider = configuration.EventPipeProviders.Single();
+        sessionConfiguration.EventPipeProviders.Count.Should().Be(1);
+        var provider = sessionConfiguration.EventPipeProviders.Single();
         provider.Name.Should().Be(counterProvider);
     }
 
@@ -38,9 +40,10 @@ public class CounterProducerConfigurationTests
     {
         var meter = "Meter";
         var configuration = new CounterProducerConfiguration(sessionId, string.Empty, meter, refreshInterval, 0, 0);
+        var sessionConfiguration = configuration.GetSessionConfiguration();
 
-        configuration.EventPipeProviders.Count.Should().Be(1);
-        var provider = configuration.EventPipeProviders.Single();
+        sessionConfiguration.EventPipeProviders.Count.Should().Be(1);
+        var provider = sessionConfiguration.EventPipeProviders.Single();
         provider.Name.Should().Be(SystemDiagnosticsMetricsProvider);
     }
 
@@ -51,9 +54,10 @@ public class CounterProducerConfigurationTests
         var counterProvider = "CounterProvider";
         var meter = "Meter";
         var configuration = new CounterProducerConfiguration(sessionId, counterProvider, meter, refreshInterval, 0, 0);
+        var sessionConfiguration = configuration.GetSessionConfiguration();
 
-        configuration.EventPipeProviders.Count.Should().Be(2);
-        var providerNames = configuration.EventPipeProviders.Select(it => it.Name).ToList();
+        sessionConfiguration.EventPipeProviders.Count.Should().Be(2);
+        var providerNames = sessionConfiguration.EventPipeProviders.Select(it => it.Name).ToList();
         providerNames.Should().Contain(counterProvider);
         providerNames.Should().Contain(SystemDiagnosticsMetricsProvider);
     }

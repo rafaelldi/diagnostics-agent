@@ -3,16 +3,20 @@ using DiagnosticsAgent.EventPipes;
 using DiagnosticsAgent.Model;
 using JetBrains.Lifetimes;
 using JetBrains.Rd.Tasks;
+using Microsoft.Diagnostics.NETCore.Client;
 using Microsoft.Diagnostics.Symbols;
 using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Etlx;
 using Microsoft.Diagnostics.Tracing.Stacks;
-// ReSharper disable SuggestBaseTypeForParameter
+using static JetBrains.Lifetimes.Lifetime;
 
 namespace DiagnosticsAgent.StackTrace;
 
 internal static class StackTraceCollectionHandler
 {
+    private static readonly EventPipeProvider[] Providers = { EventPipeProviderFactory.CreateSampleProvider() };
+    private static readonly EventPipeSessionConfiguration SessionConfiguration = new(Providers);
+
     internal static void Subscribe(DiagnosticsHostModel model)
     {
         model.CollectStackTrace.SetAsync(async (lt, command) => await CollectAsync(command, lt));
@@ -43,29 +47,21 @@ internal static class StackTraceCollectionHandler
         return stackTraces;
     }
 
-    private static async Task CollectTracesAsync(CollectStackTraceCommand command, string sessionFilePath, Lifetime lifetime)
+    private static async Task CollectTracesAsync(
+        CollectStackTraceCommand command,
+        string sessionFilePath,
+        Lifetime lifetime)
     {
-        var providers = new[] { EventPipeProviderFactory.CreateSampleProvider() };
-        var sessionManager = new EventPipeSessionManager(command.Pid);
-        using var session = sessionManager.StartSession(providers);
-
-        using var fileStream = new FileStream(sessionFilePath, FileMode.Create, FileAccess.Write);
-
-        // ReSharper disable once MethodSupportsCancellation
-        var copyTask = session.EventStream.CopyToAsync(fileStream, 81920);
-
-        try
+        await UsingAsync(lifetime, async lt =>
         {
-            await Task.Delay(TimeSpan.FromMilliseconds(10), lifetime);
-        }
-        catch (OperationCanceledException)
-        {
-            //do nothing
-        }
-
-        EventPipeSessionManager.StopSession(session);
-
-        await copyTask;
+            var sessionProvider = new EventPipeSessionProvider(command.Pid);
+            await sessionProvider.RunSessionAndCopyToFileAsync(
+                SessionConfiguration,
+                lt,
+                sessionFilePath,
+                TimeSpan.FromMilliseconds(10)
+            );
+        });
     }
 
     private static string ParseSessionFile(string traceLogFilePath)

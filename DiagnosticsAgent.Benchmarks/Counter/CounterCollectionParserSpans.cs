@@ -1,12 +1,13 @@
-﻿namespace DiagnosticsAgent.Counters.Producer;
+﻿namespace DiagnosticsAgent.Benchmarks.Counter;
 
-internal static class CounterCollectionParser
+public static class CounterCollectionParserSpans
 {
-    internal static Dictionary<string, string[]?> Parse(ReadOnlySpan<char> collectionString)
+    public static Dictionary<string, string[]?> Parse(string value)
     {
+        var collectionSpan = value.AsSpan();
         var result = new Dictionary<string, string[]?>();
 
-        if (collectionString.IsEmpty)
+        if (collectionSpan.IsEmpty)
         {
             return result;
         }
@@ -15,26 +16,26 @@ internal static class CounterCollectionParser
         var itemStartIndex = 0;
         (string Key, string[]? Collection)? item;
 
-        for (var i = 0; i < collectionString.Length; i++)
+        for (var i = 0; i < collectionSpan.Length; i++)
         {
-            if (collectionString[i] == '[')
+            if (collectionSpan[i] == '[')
             {
                 insideInternalList = true;
                 continue;
             }
 
-            if (collectionString[i] == ']')
+            if (collectionSpan[i] == ']')
             {
                 insideInternalList = false;
                 continue;
             }
 
-            if (collectionString[i] != ',' || insideInternalList)
+            if (collectionSpan[i] != ',' || insideInternalList)
             {
                 continue;
             }
 
-            item = ParseItem(collectionString.Slice(itemStartIndex, i - itemStartIndex).Trim());
+            item = ParseItem(collectionSpan.Slice(itemStartIndex, i - itemStartIndex).Trim());
             if (item.HasValue)
             {
                 result.Add(item.Value.Key, item.Value.Collection);
@@ -43,7 +44,7 @@ internal static class CounterCollectionParser
             itemStartIndex = i + 1;
         }
 
-        item = ParseItem(collectionString.Slice(itemStartIndex).Trim());
+        item = ParseItem(collectionSpan.Slice(itemStartIndex).Trim());
         if (item.HasValue)
         {
             result.Add(item.Value.Key, item.Value.Collection);
@@ -51,7 +52,7 @@ internal static class CounterCollectionParser
 
         return result;
     }
-    
+
     private static (string Key, string[]? Collection)? ParseItem(ReadOnlySpan<char> itemString)
     {
         if (itemString.IsEmpty)
