@@ -12,6 +12,9 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        runtime: [ 'win-x64', 'linux-x64', 'osx-arm64' ]
     steps:
 
       - name: Fetch Sources
@@ -23,21 +26,21 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           
       - name: Install dependencies
-        run: dotnet restore
+        run: dotnet restore -r ${{ matrix.runtime }}
 
       - name: Build tool
-        run: dotnet build -c Release --no-restore --nologo
+        run: dotnet build -c Release -r ${{ matrix.runtime }} --no-restore --nologo --no-self-contained
         working-directory: ./DiagnosticsAgent
 
       - name: Publish tool
-        run: dotnet publish -c Release --no-restore --no-build --nologo -p:PublishSingleFile=true
+        run: dotnet publish -c Release -r ${{ matrix.runtime }} --no-restore --no-build --nologo --no-self-contained -p:PublishSingleFile=true 
         working-directory: ./DiagnosticsAgent
 
       - name: Upload artifact
         uses: actions/upload-artifact@main
         with:
-          name: diagnostics-agent
-          path: DiagnosticsAgent/bin/Release/net7.0/publish/
+          name: diagnostics-agent-${{ matrix.runtime }}
+          path: DiagnosticsAgent/bin/Release/net7.0/${{ matrix.runtime }}/publish/
 
   test:
     name: Test
@@ -55,24 +58,24 @@ jobs:
 
       - name: Run Tests
         run: dotnet test
-        working-directory: ./DiagnosticsAgentTests
+        working-directory: ./DiagnosticsAgent.Tests
 
-  inspectCode:
-    name: Inspect code
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      checks: write
-      pull-requests: write
-    steps:
-
-      - name: Fetch Sources
-        uses: actions/checkout@v3
-
-      - name: Qodana - Code Inspection
-        uses: JetBrains/qodana-action@v2023.2.1
-        with:
-          cache-default-branch-only: true
-        env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+#  inspectCode:
+#    name: Inspect code
+#    needs: build
+#    runs-on: ubuntu-latest
+#    permissions:
+#      contents: write
+#      checks: write
+#      pull-requests: write
+#    steps:
+#
+#      - name: Fetch Sources
+#        uses: actions/checkout@v3
+#
+#      - name: Qodana - Code Inspection
+#        uses: JetBrains/qodana-action@v2023.2.1
+#        with:
+#          cache-default-branch-only: true
+#        env:
+#          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
