@@ -9,4 +9,4 @@
 ### Added
 - Initial release
 
-[2023.2.0]: https://github.com/rafaelldi/diagnostics-client-plugin/commits/v2023.2.0
+[2023.2.0]: https://github.com/rafaelldi/diagnostics-agent/commits/v2023.2.0
