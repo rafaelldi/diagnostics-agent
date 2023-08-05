@@ -1,5 +1,7 @@
 # Diagnostics Agent
 
+[![Build](https://github.com/rafaelldi/diagnostics-agent/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/rafaelldi/diagnostics-agent/actions/workflows/build.yml)
+
 Diagnostics Agent is a .NET global tool designed to collect various diagnostics information such as traces, metrics,
 and dumps about a process running on a host, and send it to a server for analysis.
 It utilizes the [Reactive Distributed communication framework](https://github.com/JetBrains/rd), to establish a

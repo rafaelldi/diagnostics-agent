@@ -2,4 +2,7 @@
 
 # diagnostics-agent Changelog
 
-## [Unreleased]
+## [2023.2.0]
+
+### Added
+- Initial release
