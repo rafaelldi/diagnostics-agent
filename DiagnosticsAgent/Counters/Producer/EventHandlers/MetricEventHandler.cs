@@ -17,7 +17,7 @@ internal sealed class MetricEventHandler : IEventPipeEventHandler
     private readonly ChannelWriter<ValueCounter> _writer;
 
     public MetricEventHandler(
-        int pid, 
+        int pid,
         int refreshInterval,
         string sessionId,
         Func<string, string, bool> isMetricEnabled,
@@ -142,6 +142,7 @@ internal sealed class MetricEventHandler : IEventPipeEventHandler
         var unit = (string)evt.PayloadValue(4);
         var tags = (string)evt.PayloadValue(5);
         var quantiles = (string)evt.PayloadValue(6);
+        if (string.IsNullOrEmpty(quantiles)) return;
         var quantileValues = ParseQuantiles(quantiles.AsSpan());
 
         var counter = MapToMetricCounter(evt.TimeStamp, instrumentName, unit, meterName, quantileValues.Value50,
