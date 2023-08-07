@@ -66,10 +66,8 @@ internal static class StackTraceCollectionHandler
 
     private static string ParseSessionFile(string traceLogFilePath)
     {
-        using var symbolReader = new SymbolReader(TextWriter.Null)
-        {
-            SymbolPath = SymbolPath.MicrosoftSymbolServerPath
-        };
+        using var symbolReader = new SymbolReader(TextWriter.Null);
+        symbolReader.SymbolPath = SymbolPath.MicrosoftSymbolServerPath;
         using var traceLog = new TraceLog(traceLogFilePath);
         var stackSource = new MutableTraceEventStackSource(traceLog)
         {

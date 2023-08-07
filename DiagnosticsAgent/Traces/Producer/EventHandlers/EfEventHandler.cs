@@ -60,8 +60,8 @@ internal sealed class EfEventHandler : IEventPipeEventHandler
         {
             if (!argument.TryGetValue("Key", out var key) || !argument.TryGetValue("Value", out var value)) continue;
 
-            var keyString = key?.ToString();
-            var valueString = value?.ToString();
+            var keyString = key.ToString();
+            var valueString = value.ToString();
 
             if (string.IsNullOrEmpty(keyString) || string.IsNullOrEmpty(valueString))
             {

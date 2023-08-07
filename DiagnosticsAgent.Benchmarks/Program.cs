@@ -3,4 +3,5 @@
 using BenchmarkDotNet.Running;
 using DiagnosticsAgent.Benchmarks.Counter;
 
+// ReSharper disable once UnusedVariable
 var summary = BenchmarkRunner.Run<CounterCollectionParser>();
