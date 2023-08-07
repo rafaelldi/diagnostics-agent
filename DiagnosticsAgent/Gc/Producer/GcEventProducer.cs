@@ -2,7 +2,6 @@
 using DiagnosticsAgent.Common.Session;
 using DiagnosticsAgent.EventPipes;
 using JetBrains.Lifetimes;
-using Microsoft.Diagnostics.NETCore.Client;
 using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Analysis;
 using Microsoft.Diagnostics.Tracing.Analysis.GC;
@@ -14,8 +13,8 @@ internal sealed class GcEventProducer : IValueProducer
 {
     private readonly int _pid;
     private readonly EventPipeSessionProvider _sessionProvider;
+    private readonly EventPipeSessionConfiguration _sessionConfiguration;
     private readonly ChannelWriter<ValueGcEvent> _writer;
-    private readonly EventPipeProvider[] _providers;
 
     internal GcEventProducer(
         int pid,
@@ -25,21 +24,25 @@ internal sealed class GcEventProducer : IValueProducer
         _pid = pid;
         _sessionProvider = new EventPipeSessionProvider(pid);
         _writer = writer;
-        _providers = new[] { EventPipeProviderFactory.CreateGcProvider() };
+
+        _sessionConfiguration = new EventPipeSessionConfiguration(
+            new[] { EventPipeProviderFactory.CreateGcProvider() },
+            false
+        );
 
         lifetime.OnTermination(() => _writer.Complete());
     }
 
     public async Task ProduceAsync()
     {
-        var sessionConfiguration = new EventPipeSessionConfiguration(_providers, false);
         await _sessionProvider.RunSessionAndSubscribeAsync(
-            sessionConfiguration,
+            _sessionConfiguration,
             Lifetime.AsyncLocal.Value,
             (source, _) => SubscribeToEvents(source)
         );
     }
 
+    // ReSharper disable once SuggestBaseTypeForParameter
     private void SubscribeToEvents(EventPipeEventSource source)
     {
         source.NeedLoadedDotNetRuntimes();

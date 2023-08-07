@@ -15,7 +15,15 @@ internal static class EventPipeProviderFactory
     private const string MaxTimeSeriesArgument = "MaxTimeSeries";
     private const string MaxHistogramsArgument = "MaxHistograms";
 
-    internal static EventPipeProvider[] CreateCounterProviders(IReadOnlyCollection<string> providers, int interval)
+    internal static EventPipeProvider CreateCounterProvider(string provider, int interval = 1) =>
+        new(
+            provider,
+            EventLevel.Informational,
+            (long)EventKeywords.None,
+            new Dictionary<string, string> { [IntervalArgument] = interval.ToString() }
+        );
+
+    internal static EventPipeProvider[] CreateCounterProviders(IReadOnlyCollection<string> providers, int interval = 1)
     {
         var providerArguments = new Dictionary<string, string>
         {

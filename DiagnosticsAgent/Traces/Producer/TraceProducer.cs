@@ -10,7 +10,7 @@ namespace DiagnosticsAgent.Traces.Producer;
 internal sealed class TraceProducer : IValueProducer
 {
     private readonly EventPipeSessionProvider _sessionProvider;
-    private readonly TraceProducerConfiguration _configuration;
+    private readonly EventPipeSessionConfiguration _sessionConfiguration;
     private readonly List<IEventPipeEventHandler> _handlers;
 
     internal TraceProducer(
@@ -20,46 +20,46 @@ internal sealed class TraceProducer : IValueProducer
         Lifetime lifetime)
     {
         _sessionProvider = new EventPipeSessionProvider(pid);
-        _configuration = configuration;
+        _sessionConfiguration = configuration.GetSessionConfiguration();
 
         _handlers = new List<IEventPipeEventHandler>(8);
 
-        if (_configuration.IsHttpEnabled)
+        if (configuration.IsHttpEnabled)
         {
             _handlers.Add(new HttpEventHandler(pid, writer));
         }
 
-        if (_configuration.IsAspNetEnabled)
+        if (configuration.IsAspNetEnabled)
         {
             _handlers.Add(new AspNetEventHandler(pid, writer));
         }
 
-        if (_configuration.IsEfEnabled)
+        if (configuration.IsEfEnabled)
         {
             _handlers.Add(new EfEventHandler(pid, writer));
         }
 
-        if (_configuration.IsExceptionsEnabled)
+        if (configuration.IsExceptionsEnabled)
         {
             _handlers.Add(new ExceptionEventHandler(pid, writer));
         }
 
-        if (_configuration.IsThreadsEnabled)
+        if (configuration.IsThreadsEnabled)
         {
             _handlers.Add(new ThreadEventHandler(pid, writer));
         }
 
-        if (_configuration.IsContentionsEnabled)
+        if (configuration.IsContentionsEnabled)
         {
             _handlers.Add(new ContentionEventHandler(pid, writer));
         }
 
-        if (_configuration.IsTasksEnabled)
+        if (configuration.IsTasksEnabled)
         {
             _handlers.Add(new TaskEventHandler(pid, writer));
         }
 
-        if (_configuration.IsLoaderEnabled)
+        if (configuration.IsLoaderEnabled)
         {
             _handlers.Add(new LoaderEventHandler(pid, writer));
         }
@@ -69,9 +69,8 @@ internal sealed class TraceProducer : IValueProducer
 
     public async Task ProduceAsync()
     {
-        var sessionConfiguration = _configuration.GetSessionConfiguration();
         await _sessionProvider.RunSessionAndSubscribeAsync(
-            sessionConfiguration,
+            _sessionConfiguration,
             Lifetime.AsyncLocal.Value,
             SubscribeToEvents
         );

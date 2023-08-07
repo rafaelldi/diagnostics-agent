@@ -1,13 +1,13 @@
 ﻿using System.Threading.Channels;
+using DiagnosticsAgent.Chart.Exporter;
+using DiagnosticsAgent.Chart.Producer;
 using DiagnosticsAgent.Common.Session;
-using DiagnosticsAgent.Counters;
-using DiagnosticsAgent.Counters.Producer;
 using DiagnosticsAgent.Model;
 using JetBrains.Lifetimes;
 
 namespace DiagnosticsAgent.Chart;
 
-internal sealed class ChartProtocolSessionEnvelope : ProtocolSessionEnvelope<ChartProtocolSession, ValueCounter>
+internal sealed class ChartProtocolSessionEnvelope : ProtocolSessionEnvelope<ChartProtocolSession, ValueChartEvent>
 {
     internal ChartProtocolSessionEnvelope(int pid, ChartProtocolSession session, Lifetime lifetime) :
         base(pid, session, lifetime)
@@ -16,24 +16,13 @@ internal sealed class ChartProtocolSessionEnvelope : ProtocolSessionEnvelope<Cha
 
     protected override IValueConsumer CreateConsumer(
         ChartProtocolSession session,
-        ChannelReader<ValueCounter> reader
-    ) => new ChartProtocolExporter(session, reader);
+        ChannelReader<ValueChartEvent> reader
+    ) => new ChartEventProtocolExporter(session, reader);
 
     protected override IValueProducer CreateProducer(
         int pid,
         ChartProtocolSession session,
-        ChannelWriter<ValueCounter> writer,
-        Lifetime lifetime)
-    {
-        var configuration = new CounterProducerConfiguration(
-            Guid.NewGuid().ToString(),
-            "System.Runtime[cpu-usage,gc-heap-size,working-set]",
-            null,
-            1,
-            1000,
-            10
-        );
-
-        return new CounterProducer(pid, configuration, writer, lifetime);
-    }
+        ChannelWriter<ValueChartEvent> writer,
+        Lifetime lifetime
+    ) => new ChartEventProducer(pid, writer, lifetime);
 }

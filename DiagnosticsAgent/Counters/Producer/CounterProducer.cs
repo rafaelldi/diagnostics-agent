@@ -10,7 +10,7 @@ namespace DiagnosticsAgent.Counters.Producer;
 internal sealed class CounterProducer : IValueProducer
 {
     private readonly EventPipeSessionProvider _sessionProvider;
-    private readonly CounterProducerConfiguration _configuration;
+    private readonly EventPipeSessionConfiguration _sessionConfiguration;
     private readonly CounterEventHandler _counterEventHandler;
     private readonly MetricEventHandler? _metricEventHandler;
 
@@ -21,20 +21,20 @@ internal sealed class CounterProducer : IValueProducer
         Lifetime lifetime)
     {
         _sessionProvider = new EventPipeSessionProvider(pid);
-        _configuration = configuration;
+        _sessionConfiguration = configuration.GetSessionConfiguration();
 
         _counterEventHandler = new CounterEventHandler(
             pid,
             configuration.RefreshInterval,
-            (provider, counter) => _configuration.IsCounterEnabled(provider, counter),
+            configuration.IsCounterEnabled,
             writer
         );
-        _metricEventHandler = _configuration.IsMetricsEnabled
+        _metricEventHandler = configuration.IsMetricsEnabled
             ? new MetricEventHandler(
                 pid,
                 configuration.RefreshInterval,
                 configuration.SessionId,
-                (meter, instrument) => _configuration.IsMetricEnabled(meter, instrument),
+                configuration.IsMetricEnabled,
                 writer
             )
             : null;
@@ -44,9 +44,8 @@ internal sealed class CounterProducer : IValueProducer
 
     public async Task ProduceAsync()
     {
-        var sessionConfiguration = _configuration.GetSessionConfiguration();
         await _sessionProvider.RunSessionAndSubscribeAsync(
-            sessionConfiguration,
+            _sessionConfiguration,
             Lifetime.AsyncLocal.Value,
             SubscribeToEvents
         );
