@@ -15,6 +15,6 @@ internal sealed class ChartEventProtocolExporter : ProtocolExporter<ChartProtoco
     {
         var offset = new DateTimeOffset(value.TimeStamp);
         var timestamp = offset.ToUnixTimeSeconds();
-        Session.ValueReceived.Fire(new ChartValue(timestamp, value.Value, value.Type));
+        Session.EventReceived.Fire(new ChartEvent(timestamp, value.Value, value.Type, value.Label));
     }
 }

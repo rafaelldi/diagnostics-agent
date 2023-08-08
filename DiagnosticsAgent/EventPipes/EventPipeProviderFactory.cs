@@ -59,6 +59,18 @@ internal static class EventPipeProviderFactory
             }
         );
 
+    internal static EventPipeProvider CreateTraceProvider(
+        string name,
+        EventLevel level,
+        long flags,
+        Dictionary<string, string>? arguments = null
+    ) => new(
+        name,
+        level,
+        flags,
+        arguments
+    );
+
     internal static EventPipeProvider[] CreateTraceProviders(IReadOnlyCollection<TraceProvider> providers) =>
         providers.Select(it => new EventPipeProvider(
                 it.Name,
