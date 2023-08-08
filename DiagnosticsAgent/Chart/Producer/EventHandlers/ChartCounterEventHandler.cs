@@ -45,11 +45,11 @@ internal sealed class ChartCounterEventHandler : IEventPipeEventHandler
         var payloadFields = (IDictionary<string, object>)payloadVal["Payload"];
         var name = payloadFields["Name"].ToString();
 
-        ChartValueType? type = name switch
+        ChartEventType? type = name switch
         {
-            CpuCounterName => ChartValueType.Cpu,
-            GcHeapSizeCounterName => ChartValueType.GcHeapSize,
-            WorkingSetCounterName => ChartValueType.WorkingSet,
+            CpuCounterName => ChartEventType.Cpu,
+            GcHeapSizeCounterName => ChartEventType.GcHeapSize,
+            WorkingSetCounterName => ChartEventType.WorkingSet,
             _ => null
         };
         if (type is null) return;
@@ -58,6 +58,6 @@ internal sealed class ChartCounterEventHandler : IEventPipeEventHandler
             ? (double)payloadFields["Increment"]
             : (double)payloadFields["Mean"];
 
-        _writer.TryWrite(new ValueChartEvent(evt.TimeStamp, type.Value, value));
+        _writer.TryWrite(new ValueChartEvent(evt.TimeStamp, type.Value, value, null));
     }
 }
