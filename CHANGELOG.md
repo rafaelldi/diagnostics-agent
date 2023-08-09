@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+### Added
+- Add gc and exception events to the chart
+
 ## [2023.2.0] - 2023-08-05
 
 ### Added
