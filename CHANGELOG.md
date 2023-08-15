@@ -2,7 +2,7 @@
 
 # diagnostics-agent Changelog
 
-## [Unreleased]
+## [2023.2.1] - 2023-08-15
 
 ### Added
 - Add gc and exception events to the chart
@@ -12,4 +12,5 @@
 ### Added
 - Initial release
 
+[2023.2.1]: https://github.com/rafaelldi/diagnostics-agent/compare/v2023.2.0...v2023.2.1
 [2023.2.0]: https://github.com/rafaelldi/diagnostics-agent/commits/v2023.2.0
