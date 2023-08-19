@@ -18,7 +18,7 @@ internal static class ValueCounterMappers
             name,
             $"{name} ({displayUnits} / {refreshInterval} sec)",
             providerName,
-            value,
+            Math.Round(value, 2),
             CounterType.Rate,
             tags
         );
@@ -36,7 +36,7 @@ internal static class ValueCounterMappers
         name,
         string.IsNullOrEmpty(units) ? name : $"{name} ({units})",
         providerName,
-        value,
+        Math.Round(value, 2),
         CounterType.Metric,
         tags
     );
