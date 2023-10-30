@@ -31,7 +31,7 @@
 
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations" Version="2023.2.0" />
-        <PackageReference Include="JetBrains.RdFramework" Version="2023.3.1" />
+        <PackageReference Include="JetBrains.RdFramework" Version="2023.3.3" />
         <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.447801" />
         <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="3.0.442202" />
         <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.6" />
