@@ -14,6 +14,8 @@ internal sealed class ChartCounterEventHandler : IEventPipeEventHandler
     private const string CpuCounterName = "cpu-usage";
     private const string GcHeapSizeCounterName = "gc-heap-size";
     private const string WorkingSetCounterName = "working-set";
+    private const string ExceptionCountCounterName = "exception-count";
+    private const string ThreadCountCounterName = "threadpool-thread-count";
 
     public ChartCounterEventHandler(int pid, ChannelWriter<ValueChartEvent> writer)
     {
@@ -50,6 +52,8 @@ internal sealed class ChartCounterEventHandler : IEventPipeEventHandler
             CpuCounterName => ChartEventType.Cpu,
             GcHeapSizeCounterName => ChartEventType.GcHeapSize,
             WorkingSetCounterName => ChartEventType.WorkingSet,
+            ExceptionCountCounterName => ChartEventType.ExceptionCount,
+            ThreadCountCounterName => ChartEventType.ThreadCount,
             _ => null
         };
         if (type is null) return;
