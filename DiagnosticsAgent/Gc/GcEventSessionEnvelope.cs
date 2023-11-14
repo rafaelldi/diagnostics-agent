@@ -7,21 +7,21 @@ using JetBrains.Lifetimes;
 
 namespace DiagnosticsAgent.Gc;
 
-internal sealed class GcEventProtocolSessionEnvelope : ProtocolSessionEnvelope<GcEventProtocolSession, ValueGcEvent>
+internal sealed class GcEventSessionEnvelope : ProtocolSessionEnvelope<GcEventSession, ValueGcEvent>
 {
-    internal GcEventProtocolSessionEnvelope(int pid, GcEventProtocolSession session, Lifetime lifetime)
+    internal GcEventSessionEnvelope(int pid, GcEventSession session, Lifetime lifetime)
         : base(pid, session, lifetime)
     {
     }
 
     protected override IValueConsumer CreateConsumer(
-        GcEventProtocolSession session,
+        GcEventSession session,
         ChannelReader<ValueGcEvent> reader
     ) => new GcEventProtocolExporter(session, reader);
 
     protected override IValueProducer CreateProducer(
         int pid,
-        GcEventProtocolSession session,
+        GcEventSession session,
         ChannelWriter<ValueGcEvent> writer,
         Lifetime lifetime
     ) => new GcEventProducer(pid, writer, lifetime);

@@ -7,21 +7,21 @@ using JetBrains.Lifetimes;
 
 namespace DiagnosticsAgent.Counters;
 
-internal sealed class CounterProtocolSessionEnvelope : ProtocolSessionEnvelope<CounterProtocolSession, ValueCounter>
+internal sealed class CounterSessionEnvelope : ProtocolSessionEnvelope<CounterSession, ValueCounter>
 {
-    public CounterProtocolSessionEnvelope(int pid, CounterProtocolSession session, Lifetime lifetime)
+    public CounterSessionEnvelope(int pid, CounterSession session, Lifetime lifetime)
         : base(pid, session, lifetime)
     {
     }
 
     protected override IValueConsumer CreateConsumer(
-        CounterProtocolSession session,
+        CounterSession session,
         ChannelReader<ValueCounter> reader
     ) => new CounterProtocolExporter(session, reader);
 
     protected override IValueProducer CreateProducer(
         int pid,
-        CounterProtocolSession session,
+        CounterSession session,
         ChannelWriter<ValueCounter> writer,
         Lifetime lifetime)
     {

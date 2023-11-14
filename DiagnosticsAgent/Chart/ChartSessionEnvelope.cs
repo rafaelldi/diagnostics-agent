@@ -7,21 +7,21 @@ using JetBrains.Lifetimes;
 
 namespace DiagnosticsAgent.Chart;
 
-internal sealed class ChartProtocolSessionEnvelope : ProtocolSessionEnvelope<ChartProtocolSession, ValueChartEvent>
+internal sealed class ChartSessionEnvelope : ProtocolSessionEnvelope<ChartSession, ValueChartEvent>
 {
-    internal ChartProtocolSessionEnvelope(int pid, ChartProtocolSession session, Lifetime lifetime) :
+    internal ChartSessionEnvelope(int pid, ChartSession session, Lifetime lifetime) :
         base(pid, session, lifetime)
     {
     }
 
     protected override IValueConsumer CreateConsumer(
-        ChartProtocolSession session,
+        ChartSession session,
         ChannelReader<ValueChartEvent> reader
     ) => new ChartEventProtocolExporter(session, reader);
 
     protected override IValueProducer CreateProducer(
         int pid,
-        ChartProtocolSession session,
+        ChartSession session,
         ChannelWriter<ValueChartEvent> writer,
         Lifetime lifetime
     ) => new ChartEventProducer(pid, writer, lifetime);

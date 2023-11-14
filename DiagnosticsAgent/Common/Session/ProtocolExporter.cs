@@ -1,10 +1,9 @@
 ﻿using System.Threading.Channels;
-using DiagnosticsAgent.Model;
 using JetBrains.Lifetimes;
 
 namespace DiagnosticsAgent.Common.Session;
 
-internal abstract class ProtocolExporter<TSession, TValue> : IValueConsumer where TSession : ProtocolSession
+internal abstract class ProtocolExporter<TSession, TValue> : IValueConsumer where TSession : Model.Session
 {
     private readonly ChannelReader<TValue> _reader;
     protected readonly TSession Session;
@@ -21,7 +20,7 @@ internal abstract class ProtocolExporter<TSession, TValue> : IValueConsumer wher
         {
             await foreach (var value in _reader.ReadAllAsync(Lifetime.AsyncLocal.Value))
             {
-                ExportToProtocol(value);
+                Export(value);
             }
         }
         catch (OperationCanceledException)
@@ -30,5 +29,5 @@ internal abstract class ProtocolExporter<TSession, TValue> : IValueConsumer wher
         }
     }
 
-    protected abstract void ExportToProtocol(TValue value);
+    protected abstract void Export(TValue value);
 }

@@ -4,16 +4,16 @@ using JetBrains.Lifetimes;
 
 namespace DiagnosticsAgent.Counters;
 
-internal static class CounterProtocolSessionHandler
+internal static class CounterSessionHandler
 {
     internal static void Subscribe(DiagnosticsHostModel model, Lifetime lifetime)
     {
-        model.CounterProtocolSessions.View(lifetime, Handle);
+        model.CounterSessions.View(lifetime, Handle);
     }
 
-    private static void Handle(Lifetime lt, int pid, CounterProtocolSession session)
+    private static void Handle(Lifetime lt, int pid, CounterSession session)
     {
-        var envelope = new CounterProtocolSessionEnvelope(pid, session, lt);
+        var envelope = new CounterSessionEnvelope(pid, session, lt);
         lt.KeepAlive(envelope);
     }
 }

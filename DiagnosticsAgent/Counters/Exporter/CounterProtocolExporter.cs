@@ -4,14 +4,14 @@ using DiagnosticsAgent.Model;
 
 namespace DiagnosticsAgent.Counters.Exporter;
 
-internal sealed class CounterProtocolExporter : ProtocolExporter<CounterProtocolSession, ValueCounter>
+internal sealed class CounterProtocolExporter : ProtocolExporter<CounterSession, ValueCounter>
 {
-    internal CounterProtocolExporter(CounterProtocolSession session, ChannelReader<ValueCounter> reader)
+    internal CounterProtocolExporter(CounterSession session, ChannelReader<ValueCounter> reader)
         : base(session, reader)
     {
     }
 
-    protected override void ExportToProtocol(ValueCounter value)
+    protected override void Export(ValueCounter value)
     {
         Session.CounterReceived.Fire(new Counter(value.DisplayName, value.Tags, value.Value));
     }

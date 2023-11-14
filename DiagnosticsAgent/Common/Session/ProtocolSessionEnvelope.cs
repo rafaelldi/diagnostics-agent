@@ -1,12 +1,11 @@
 ﻿using System.Threading.Channels;
-using DiagnosticsAgent.Model;
 using JetBrains.Annotations;
 using JetBrains.Collections.Viewable;
 using JetBrains.Lifetimes;
 
 namespace DiagnosticsAgent.Common.Session;
 
-internal abstract class ProtocolSessionEnvelope<TSession, TValue> where TSession : ProtocolSession
+internal abstract class ProtocolSessionEnvelope<TSession, TValue> where TSession : Model.Session
 {
     private readonly IValueConsumer _consumer;
     private readonly IValueProducer _producer;

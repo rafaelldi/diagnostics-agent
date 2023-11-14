@@ -7,21 +7,21 @@ using JetBrains.Lifetimes;
 
 namespace DiagnosticsAgent.Traces;
 
-internal sealed class TraceProtocolSessionEnvelope : ProtocolSessionEnvelope<TraceProtocolSession, ValueTrace>
+internal sealed class TraceSessionEnvelope : ProtocolSessionEnvelope<TraceSession, ValueTrace>
 {
-    internal TraceProtocolSessionEnvelope(int pid, TraceProtocolSession session, Lifetime lifetime)
+    internal TraceSessionEnvelope(int pid, TraceSession session, Lifetime lifetime)
         : base(pid, session, lifetime)
     {
     }
 
     protected override IValueConsumer CreateConsumer(
-        TraceProtocolSession session,
+        TraceSession session,
         ChannelReader<ValueTrace> reader
     ) => new TraceProtocolExporter(session, reader);
 
     protected override IValueProducer CreateProducer(
         int pid,
-        TraceProtocolSession session,
+        TraceSession session,
         ChannelWriter<ValueTrace> writer,
         Lifetime lifetime)
     {

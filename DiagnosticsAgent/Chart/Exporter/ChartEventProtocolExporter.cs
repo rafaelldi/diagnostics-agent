@@ -4,14 +4,14 @@ using DiagnosticsAgent.Model;
 
 namespace DiagnosticsAgent.Chart.Exporter;
 
-internal sealed class ChartEventProtocolExporter : ProtocolExporter<ChartProtocolSession, ValueChartEvent>
+internal sealed class ChartEventProtocolExporter : ProtocolExporter<ChartSession, ValueChartEvent>
 {
-    internal ChartEventProtocolExporter(ChartProtocolSession session, ChannelReader<ValueChartEvent> reader)
+    internal ChartEventProtocolExporter(ChartSession session, ChannelReader<ValueChartEvent> reader)
         : base(session, reader)
     {
     }
 
-    protected override void ExportToProtocol(ValueChartEvent value)
+    protected override void Export(ValueChartEvent value)
     {
         var offset = new DateTimeOffset(value.TimeStamp);
         var timestamp = offset.ToUnixTimeSeconds();

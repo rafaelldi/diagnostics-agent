@@ -8,12 +8,12 @@ internal static class ChartProtocolSessionHandler
 {
     internal static void Subscribe(DiagnosticsHostModel model, Lifetime lifetime)
     {
-        model.ChartProtocolSessions.View(lifetime, Handle);
+        model.ChartSessions.View(lifetime, Handle);
     }
 
-    private static void Handle(Lifetime lt, int pid, ChartProtocolSession session)
+    private static void Handle(Lifetime lt, int pid, ChartSession session)
     {
-        var envelope = new ChartProtocolSessionEnvelope(pid, session, lt);
+        var envelope = new ChartSessionEnvelope(pid, session, lt);
         lt.KeepAlive(envelope);
     }
 }

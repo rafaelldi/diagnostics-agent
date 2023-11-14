@@ -4,14 +4,14 @@ using DiagnosticsAgent.Model;
 
 namespace DiagnosticsAgent.Gc.Exporter;
 
-internal sealed class GcEventProtocolExporter : ProtocolExporter<GcEventProtocolSession, ValueGcEvent>
+internal sealed class GcEventProtocolExporter : ProtocolExporter<GcEventSession, ValueGcEvent>
 {
-    internal GcEventProtocolExporter(GcEventProtocolSession session, ChannelReader<ValueGcEvent> reader)
+    internal GcEventProtocolExporter(GcEventSession session, ChannelReader<ValueGcEvent> reader)
         : base(session, reader)
     {
     }
 
-    protected override void ExportToProtocol(ValueGcEvent value)
+    protected override void Export(ValueGcEvent value)
     {
         Session.GcHappened.Fire(new GcEvent(
             value.Number,
