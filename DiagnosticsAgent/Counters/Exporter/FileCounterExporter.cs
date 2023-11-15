@@ -4,17 +4,8 @@ using JetBrains.Lifetimes;
 
 namespace DiagnosticsAgent.Counters.Exporter;
 
-internal abstract class FileCounterExporter
+internal abstract class FileCounterExporter(string filePath, ChannelReader<ValueCounter> reader)
 {
-    private readonly string _filePath;
-    private readonly ChannelReader<ValueCounter> _reader;
-
-    protected FileCounterExporter(string filePath, ChannelReader<ValueCounter> reader)
-    {
-        _filePath = filePath;
-        _reader = reader;
-    }
-
     internal async Task ConsumeAsync()
     {
         if (Lifetime.AsyncLocal.Value.IsNotAlive)
@@ -22,7 +13,7 @@ internal abstract class FileCounterExporter
             return;
         }
 
-        await using var streamWriter = File.CreateText(_filePath);
+        await using var streamWriter = File.CreateText(filePath);
 
         var header = GetFileHeader();
         if (header != null)
@@ -32,7 +23,7 @@ internal abstract class FileCounterExporter
 
         try
         {
-            await foreach (var counter in _reader.ReadAllAsync(Lifetime.AsyncLocal.Value))
+            await foreach (var counter in reader.ReadAllAsync(Lifetime.AsyncLocal.Value))
             {
                 await streamWriter.WriteLineAsync(GetCounterString(in counter));
             }

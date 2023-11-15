@@ -6,25 +6,14 @@ using static DiagnosticsAgent.Counters.Producer.ValueCounterMappers;
 
 namespace DiagnosticsAgent.Counters.Producer.EventHandlers;
 
-internal sealed class CounterEventHandler : IEventPipeEventHandler
+internal sealed class CounterEventHandler(
+    int pid,
+    int refreshInterval,
+    Func<string, string, bool> isCounterEnabled,
+    ChannelWriter<ValueCounter> writer)
+    : IEventPipeEventHandler
 {
-    private readonly int _pid;
-    private readonly int _refreshInterval;
-    private readonly Func<string, string, bool> _isCounterEnabled;
-    private readonly ChannelWriter<ValueCounter> _writer;
     private const string EventName = "EventCounters";
-
-    public CounterEventHandler(
-        int pid,
-        int refreshInterval,
-        Func<string, string, bool> isCounterEnabled,
-        ChannelWriter<ValueCounter> writer)
-    {
-        _pid = pid;
-        _refreshInterval = refreshInterval;
-        _isCounterEnabled = isCounterEnabled;
-        _writer = writer;
-    }
 
     public void SubscribeToEvents(EventPipeEventSource source, Lifetime lifetime)
     {
@@ -36,7 +25,7 @@ internal sealed class CounterEventHandler : IEventPipeEventHandler
 
     private void HandleEvent(TraceEvent evt)
     {
-        if (evt.ProcessID != _pid)
+        if (evt.ProcessID != pid)
         {
             return;
         }
@@ -50,13 +39,13 @@ internal sealed class CounterEventHandler : IEventPipeEventHandler
         var payloadFields = (IDictionary<string, object>)payloadVal["Payload"];
 
         var name = payloadFields["Name"].ToString();
-        if (name is null || !_isCounterEnabled(evt.ProviderName, name))
+        if (name is null || !isCounterEnabled(evt.ProviderName, name))
         {
             return;
         }
 
-        var counter = MapCounterEvent(evt.ProviderName, name, evt.TimeStamp, _refreshInterval, payloadFields);
-        _writer.TryWrite(counter);
+        var counter = MapCounterEvent(evt.ProviderName, name, evt.TimeStamp, refreshInterval, payloadFields);
+        writer.TryWrite(counter);
     }
 
     private static ValueCounter MapCounterEvent(string providerName, string name, DateTime timeStamp,

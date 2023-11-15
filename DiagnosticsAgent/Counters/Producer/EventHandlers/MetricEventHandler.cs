@@ -8,28 +8,14 @@ using static DiagnosticsAgent.Counters.Producer.ValueCounterMappers;
 
 namespace DiagnosticsAgent.Counters.Producer.EventHandlers;
 
-internal sealed class MetricEventHandler : IEventPipeEventHandler
+internal sealed class MetricEventHandler(
+    int pid,
+    int refreshInterval,
+    string id,
+    Func<string, string, bool> isMetricEnabled,
+    ChannelWriter<ValueCounter> writer)
+    : IEventPipeEventHandler
 {
-    private readonly int _pid;
-    private readonly int _refreshInterval;
-    private readonly string _sessionId;
-    private readonly Func<string, string, bool> _isMetricEnabled;
-    private readonly ChannelWriter<ValueCounter> _writer;
-
-    public MetricEventHandler(
-        int pid,
-        int refreshInterval,
-        string sessionId,
-        Func<string, string, bool> isMetricEnabled,
-        ChannelWriter<ValueCounter> writer)
-    {
-        _pid = pid;
-        _refreshInterval = refreshInterval;
-        _sessionId = sessionId;
-        _isMetricEnabled = isMetricEnabled;
-        _writer = writer;
-    }
-
     public void SubscribeToEvents(EventPipeEventSource source, Lifetime lifetime)
     {
         lifetime.Bracket(
@@ -40,7 +26,7 @@ internal sealed class MetricEventHandler : IEventPipeEventHandler
 
     private void HandleEvent(TraceEvent evt)
     {
-        if (evt.ProcessID != _pid)
+        if (evt.ProcessID != pid)
         {
             return;
         }
@@ -70,7 +56,7 @@ internal sealed class MetricEventHandler : IEventPipeEventHandler
     private void HandleCounterRateEvent(TraceEvent evt)
     {
         var sessionId = (string)evt.PayloadValue(0);
-        if (sessionId != _sessionId)
+        if (sessionId != id)
         {
             return;
         }
@@ -84,7 +70,7 @@ internal sealed class MetricEventHandler : IEventPipeEventHandler
 
         var meterName = (string)evt.PayloadValue(1);
         var instrumentName = (string)evt.PayloadValue(3);
-        if (meterName is null || instrumentName is null || !_isMetricEnabled(meterName, instrumentName))
+        if (meterName is null || instrumentName is null || !isMetricEnabled(meterName, instrumentName))
         {
             return;
         }
@@ -92,14 +78,14 @@ internal sealed class MetricEventHandler : IEventPipeEventHandler
         var unit = (string)evt.PayloadValue(4);
         var tags = (string)evt.PayloadValue(5);
         var counter = MapToRateCounter(evt.TimeStamp, instrumentName, unit, meterName, rate, tags,
-            _refreshInterval);
-        _writer.TryWrite(counter);
+            refreshInterval);
+        writer.TryWrite(counter);
     }
 
     private void HandleGaugeEvent(TraceEvent evt)
     {
         var sessionId = (string)evt.PayloadValue(0);
-        if (sessionId != _sessionId)
+        if (sessionId != id)
         {
             return;
         }
@@ -113,7 +99,7 @@ internal sealed class MetricEventHandler : IEventPipeEventHandler
 
         var meterName = (string)evt.PayloadValue(1);
         var instrumentName = (string)evt.PayloadValue(3);
-        if (meterName is null || instrumentName is null || !_isMetricEnabled(meterName, instrumentName))
+        if (meterName is null || instrumentName is null || !isMetricEnabled(meterName, instrumentName))
         {
             return;
         }
@@ -121,20 +107,20 @@ internal sealed class MetricEventHandler : IEventPipeEventHandler
         var unit = (string)evt.PayloadValue(4);
         var tags = (string)evt.PayloadValue(5);
         var counter = MapToMetricCounter(evt.TimeStamp, instrumentName, unit, meterName, lastValue, tags);
-        _writer.TryWrite(counter);
+        writer.TryWrite(counter);
     }
 
     private void HandleHistogramEvent(TraceEvent evt)
     {
         var sessionId = (string)evt.PayloadValue(0);
-        if (sessionId != _sessionId)
+        if (sessionId != id)
         {
             return;
         }
 
         var meterName = (string)evt.PayloadValue(1);
         var instrumentName = (string)evt.PayloadValue(3);
-        if (meterName is null || instrumentName is null || !_isMetricEnabled(meterName, instrumentName))
+        if (meterName is null || instrumentName is null || !isMetricEnabled(meterName, instrumentName))
         {
             return;
         }
@@ -147,15 +133,15 @@ internal sealed class MetricEventHandler : IEventPipeEventHandler
 
         var counter = MapToMetricCounter(evt.TimeStamp, instrumentName, unit, meterName, quantileValues.Value50,
             CombineTagsAndQuantiles(tags, "Percentile=50"));
-        _writer.TryWrite(counter);
+        writer.TryWrite(counter);
 
         counter = MapToMetricCounter(evt.TimeStamp, instrumentName, unit, meterName, quantileValues.Value95,
             CombineTagsAndQuantiles(tags, "Percentile=95"));
-        _writer.TryWrite(counter);
+        writer.TryWrite(counter);
 
         counter = MapToMetricCounter(evt.TimeStamp, instrumentName, unit, meterName, quantileValues.Value99,
             CombineTagsAndQuantiles(tags, "Percentile=99"));
-        _writer.TryWrite(counter);
+        writer.TryWrite(counter);
 
         static string CombineTagsAndQuantiles(string tagString, string quantileString) =>
             string.IsNullOrEmpty(tagString) ? quantileString : $"{tagString},{quantileString}";
@@ -164,7 +150,7 @@ internal sealed class MetricEventHandler : IEventPipeEventHandler
     private void HandleUpDownCounterRateEvent(TraceEvent evt)
     {
         var sessionId = (string)evt.PayloadValue(0);
-        if (sessionId != _sessionId)
+        if (sessionId != id)
         {
             return;
         }
@@ -178,7 +164,7 @@ internal sealed class MetricEventHandler : IEventPipeEventHandler
 
         var meterName = (string)evt.PayloadValue(1);
         var instrumentName = (string)evt.PayloadValue(3);
-        if (meterName is null || instrumentName is null || !_isMetricEnabled(meterName, instrumentName))
+        if (meterName is null || instrumentName is null || !isMetricEnabled(meterName, instrumentName))
         {
             return;
         }
@@ -186,7 +172,7 @@ internal sealed class MetricEventHandler : IEventPipeEventHandler
         var unit = (string)evt.PayloadValue(4);
         var tags = (string)evt.PayloadValue(5);
         var counter = MapToMetricCounter(evt.TimeStamp, instrumentName, unit, meterName, value, tags);
-        _writer.TryWrite(counter);
+        writer.TryWrite(counter);
     }
 
     private static Quantiles ParseQuantiles(ReadOnlySpan<char> quantiles)

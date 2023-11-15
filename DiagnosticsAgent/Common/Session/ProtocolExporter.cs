@@ -3,22 +3,16 @@ using JetBrains.Lifetimes;
 
 namespace DiagnosticsAgent.Common.Session;
 
-internal abstract class ProtocolExporter<TSession, TValue> : IValueConsumer where TSession : Model.Session
+internal abstract class ProtocolExporter<TSession, TValue>(TSession session, ChannelReader<TValue> reader)
+    : IValueConsumer where TSession : Model.Session
 {
-    private readonly ChannelReader<TValue> _reader;
-    protected readonly TSession Session;
-
-    protected ProtocolExporter(TSession session, ChannelReader<TValue> reader)
-    {
-        _reader = reader;
-        Session = session;
-    }
+    protected readonly TSession Session = session;
 
     public async Task Consume()
     {
         try
         {
-            await foreach (var value in _reader.ReadAllAsync(Lifetime.AsyncLocal.Value))
+            await foreach (var value in reader.ReadAllAsync(Lifetime.AsyncLocal.Value))
             {
                 Export(value);
             }

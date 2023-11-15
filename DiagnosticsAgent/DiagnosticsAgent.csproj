@@ -2,14 +2,14 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>DiagnosticsAgent</RootNamespace>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>dotnet-diagnostics-agent</ToolCommandName>
         <PackageId>Rafaelldi.DiagnosticsAgent</PackageId>
-        <Version>2023.3.0</Version>
+        <Version>2023.3.1</Version>
         <Title>Diagnostics Agent</Title>
         <Description>.NET Diagnostics Agent</Description>
         <Authors>Rival Abdrakhmanov</Authors>
@@ -30,10 +30,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2023.2.0" />
+        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
         <PackageReference Include="JetBrains.RdFramework" Version="2023.3.3" />
         <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.452401" />
-        <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="3.0.442202" />
+        <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="3.1.456101" />
         <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.6" />
         <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     </ItemGroup>

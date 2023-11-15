@@ -49,13 +49,13 @@ internal static class DiagnosticsHost
         StackTraceCollectionHandler.Subscribe(model);
 
         CounterSessionHandler.Subscribe(model, lifetime);
-        CounterExportSessionHandler.Subscribe(model, lifetime);
+        CounterCollectionHandler.Subscribe(model);
 
         GcEventSessionHandler.Subscribe(model, lifetime);
-        GcEventExportSessionHandler.Subscribe(model, lifetime);
+        GcEventCollectionHandler.Subscribe(model);
 
         TraceSessionHandler.Subscribe(model, lifetime);
-        TraceExportSessionHandler.Subscribe(model, lifetime);
+        TraceCollectionHandler.Subscribe(model);
 
         ChartProtocolSessionHandler.Subscribe(model, lifetime);
     }

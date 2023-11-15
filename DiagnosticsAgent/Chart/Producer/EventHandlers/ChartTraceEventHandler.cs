@@ -7,17 +7,8 @@ using Microsoft.Diagnostics.Tracing.Parsers.Clr;
 
 namespace DiagnosticsAgent.Chart.Producer.EventHandlers;
 
-internal sealed class ChartTraceEventHandler : IEventPipeEventHandler
+internal sealed class ChartTraceEventHandler(int pid, ChannelWriter<ValueChartEvent> writer) : IEventPipeEventHandler
 {
-    private readonly int _pid;
-    private readonly ChannelWriter<ValueChartEvent> _writer;
-
-    public ChartTraceEventHandler(int pid, ChannelWriter<ValueChartEvent> writer)
-    {
-        _pid = pid;
-        _writer = writer;
-    }
-
     public void SubscribeToEvents(EventPipeEventSource source, Lifetime lifetime)
     {
         lifetime.Bracket(
@@ -33,15 +24,15 @@ internal sealed class ChartTraceEventHandler : IEventPipeEventHandler
 
     private void HandleExceptionStartEvent(ExceptionTraceData evt)
     {
-        if (evt.ProcessID != _pid) return;
+        if (evt.ProcessID != pid) return;
         var label = evt.ExceptionType;
-        _writer.TryWrite(new ValueChartEvent(evt.TimeStamp, ChartEventType.Exception, 0.0, label));
+        writer.TryWrite(new ValueChartEvent(evt.TimeStamp, ChartEventType.Exception, 0.0, label));
     }
 
     private void HandleGcStopEvent(GCEndTraceData evt)
     {
-        if (evt.ProcessID != _pid) return;
+        if (evt.ProcessID != pid) return;
         var label = $"GC generation {evt.Depth}";
-        _writer.TryWrite(new ValueChartEvent(evt.TimeStamp, ChartEventType.Gc, 0.0, label));
+        writer.TryWrite(new ValueChartEvent(evt.TimeStamp, ChartEventType.Gc, 0.0, label));
     }
 }

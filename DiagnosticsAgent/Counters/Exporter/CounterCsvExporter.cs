@@ -4,14 +4,10 @@ using System.Threading.Channels;
 
 namespace DiagnosticsAgent.Counters.Exporter;
 
-internal sealed class CounterCsvExporter : FileCounterExporter
+internal sealed class CounterCsvExporter(string filePath, ChannelReader<ValueCounter> reader)
+    : FileCounterExporter(filePath, reader)
 {
     private readonly StringBuilder _stringBuilder = new();
-
-    public CounterCsvExporter(string filePath, ChannelReader<ValueCounter> reader)
-        : base(filePath, reader)
-    {
-    }
 
     protected override string GetFileHeader() => "Timestamp,Provider,Counter,Value,Type,Tags";
 
